@@ -1,0 +1,64 @@
+---
+/**
+ * SectionIntro: the opening of a text section.
+ * A small label on the left, and the heading with its paragraph beside it.
+ * Pass the paragraph as the content between the tags.
+ */
+import { getScene, type SceneId } from '@/data/scenes';
+
+interface Props {
+  scene: SceneId;
+  heading: string;
+}
+
+const { scene: sceneId, heading } = Astro.props;
+const scene = getScene(sceneId);
+---
+
+<header class="intro">
+  <p class="label intro__label" data-reveal>
+    {scene.label}
+  </p>
+  <div class="intro__body">
+    <h2 id={`${scene.id}-title`} class="intro__heading" data-split-lines>
+      {heading}
+    </h2>
+    <div class="intro__text" data-reveal>
+      <slot />
+    </div>
+  </div>
+</header>
+
+<style>
+  .intro {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .intro__body {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .intro__heading {
+    max-width: 18ch;
+    font-size: var(--text-display);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .intro__text {
+    max-width: var(--measure);
+  }
+
+  @media (min-width: 56.25em) {
+    .intro {
+      grid-template-columns: var(--label-column) minmax(0, 1fr);
+      gap: 4rem;
+    }
+
+    .intro__label {
+      padding-top: 0.75rem;
+    }
+  }
+</style>

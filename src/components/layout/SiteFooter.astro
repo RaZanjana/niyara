@@ -1,0 +1,354 @@
+---
+/**
+ * SiteFooter: practical help for a guest who is about to travel
+ * (how to get here, how to reach a person, what to pack), followed by
+ * the page links and the hotel name set very large over its reflection.
+ */
+import TextLink from '@/components/ui/TextLink.astro';
+import {
+  footerLinks,
+  gettingHere,
+  legalLinks,
+  newsletter,
+  signOff,
+  worthKnowing,
+} from '@/data/footer';
+import { pageHref } from '@/data/routes';
+import { site } from '@/data/site';
+
+const { contact } = site;
+---
+
+<footer class="footer" data-theme="night">
+  <div class="container footer__inner">
+    <div class="footer__help">
+      <section class="footer__column" aria-labelledby="footer-getting-here">
+        <h2 id="footer-getting-here" class="footer__heading">
+          Getting here
+        </h2>
+        {gettingHere.map((paragraph) => (
+          <p class="muted">{paragraph}</p>
+        ))}
+        <TextLink href={pageHref('directions')}>Directions and a map</TextLink>
+      </section>
+
+      <section class="footer__column" aria-labelledby="footer-contact">
+        <h2 id="footer-contact" class="footer__heading">
+          Talk to someone
+        </h2>
+        <p class="muted">The phone is answered by the people who work here, {contact.hours}.</p>
+        <div class="footer__contact">
+          <a class="footer__phone" href={contact.phoneHref}>
+            <span class="visually-hidden">Call </span>
+            {contact.phone}
+          </a>
+          <a class="button button--outline" href={contact.whatsappHref}>
+            Message us on WhatsApp
+          </a>
+        </div>
+        <TextLink href={`mailto:${contact.email}`}>{contact.email}</TextLink>
+        <address class="muted">{contact.address}</address>
+      </section>
+
+      <section class="footer__column" aria-labelledby="footer-worth-knowing">
+        <h2 id="footer-worth-knowing" class="footer__heading">
+          Worth knowing
+        </h2>
+        {worthKnowing.map((paragraph) => (
+          <p class="muted">{paragraph}</p>
+        ))}
+      </section>
+    </div>
+
+    <div class="footer__more">
+      <nav aria-label="Footer">
+        <ul class="footer__links">
+          {footerLinks.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <form class="footer__news" data-newsletter>
+        <label class="muted" for="newsletter-email">
+          {newsletter.label}
+        </label>
+        <div class="footer__news-row">
+          <input
+            id="newsletter-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="Your email address"
+            required
+          />
+          <button class="button button--outline" type="submit">
+            {newsletter.button}
+          </button>
+        </div>
+        <p class="footer__news-status muted" role="status" data-newsletter-status></p>
+      </form>
+    </div>
+
+    <div class="footer__close">
+      <p class="footer__sign-off">{signOff}</p>
+
+      <!-- The name over its own reflection in the water. Decorative only. -->
+      <div class="footer__name" aria-hidden="true">
+        <div class="footer__name-text">{site.name}</div>
+        <div class="footer__waterline"></div>
+        <div class="footer__reflection">
+          <div class="footer__name-text footer__name-text--mirrored">{site.name}</div>
+        </div>
+      </div>
+
+      <div class="footer__legal muted">
+        <p class="footer__copyright">
+          <span lang="si" class="footer__sinhala">
+            {site.nameSinhala}
+          </span>
+          <span>
+            © {new Date().getFullYear()} {site.name}
+          </span>
+        </p>
+        <ul>
+          {legalLinks.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    padding-bottom: 2.5rem;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .footer__inner {
+    display: grid;
+    gap: var(--block-space);
+  }
+
+  .footer__help {
+    display: grid;
+    gap: 4rem;
+    padding-top: clamp(4.5rem, 6vw, 5.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .footer__column {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 1rem;
+    max-width: 24rem;
+  }
+
+  .footer__heading {
+    margin-bottom: 0.4rem;
+    font-size: var(--text-heading);
+    line-height: 1.2;
+  }
+
+  .footer__contact {
+    display: grid;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .footer__phone {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3rem;
+    font-family: var(--font-display);
+    font-size: 1.625rem;
+    text-decoration: none;
+  }
+
+  address {
+    font-style: normal;
+  }
+
+  .footer__more {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  .footer__links,
+  .footer__legal ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 1.25rem;
+  }
+
+  .footer__links a,
+  .footer__legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+
+  .footer__links a:hover,
+  .footer__legal a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.4em;
+    text-decoration-thickness: 1px;
+  }
+
+  .footer__news {
+    display: grid;
+    gap: 1rem;
+    max-width: 29rem;
+  }
+
+  .footer__news-row {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .footer__news input {
+    width: 100%;
+    height: var(--control-height);
+    padding: 0 0.9rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: var(--surface);
+  }
+
+  .footer__news input::placeholder {
+    color: var(--ink-muted);
+  }
+
+  .footer__news-status:empty {
+    display: none;
+  }
+
+  .footer__close {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .footer__sign-off {
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2vw, 1.625rem);
+    font-style: italic;
+    line-height: 1.3;
+  }
+
+  .footer__name {
+    overflow: hidden;
+  }
+
+  .footer__name-text {
+    font-family: var(--font-display);
+    font-size: clamp(6.5rem, 24vw, 23.75rem);
+    line-height: 0.86;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .footer__waterline {
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  .footer__reflection {
+    height: clamp(2.75rem, 9vw, 9.375rem);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000, transparent 85%);
+    mask-image: linear-gradient(to bottom, #000, transparent 85%);
+  }
+
+  .footer__name-text--mirrored {
+    opacity: 0.22;
+    transform: scaleY(-1);
+    animation: reflection-sway 9s ease-in-out infinite;
+  }
+
+  @keyframes reflection-sway {
+    0%,
+    100% {
+      transform: scaleY(-1) skewX(-1.5deg);
+    }
+    50% {
+      transform: scaleY(-1) skewX(1.5deg);
+    }
+  }
+
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 2.5rem;
+    font-size: var(--text-fine);
+  }
+
+  .footer__legal ul {
+    gap: 0 1.75rem;
+  }
+
+  .footer__copyright {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer__sinhala {
+    font-family: var(--font-sinhala);
+  }
+
+  @media (min-width: 40em) {
+    .footer__news-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+
+  @media (min-width: 56.25em) {
+    .footer__help {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .footer__contact {
+      width: auto;
+    }
+
+    .footer__more {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 29rem);
+      align-items: end;
+      gap: 4rem;
+    }
+
+    .footer__links {
+      display: flex;
+      gap: 0.25rem 2.25rem;
+      max-width: 35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer__name-text--mirrored {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+/**
+ * Location: where the hotel is and how long it takes to reach the places
+ * guests come for. Choosing a place in the list lights up its road on the map.
+ */
+import LocationMap from '@/components/ui/LocationMap.astro';
+import Scene from '@/components/ui/Scene.astro';
+import SectionIntro from '@/components/ui/SectionIntro.astro';
+import { destinations, locationIntro } from '@/data/location';
+---
+
+<Scene id="location" class="location">
+  <div class="container location__inner" data-scene-body>
+    <SectionIntro scene="location" heading={locationIntro.heading}>
+      <p>{locationIntro.text}</p>
+    </SectionIntro>
+
+    <div class="location__detail" data-location>
+      <div class="location__map" data-reveal>
+        <LocationMap />
+      </div>
+
+      <div class="location__travel" data-reveal>
+        <h3 class="label location__list-label">{locationIntro.listLabel}</h3>
+        <ul class="location__list">
+          {destinations.map((destination) => (
+            <li>
+              <button type="button" data-destination={destination.id} aria-pressed="false">
+                <span>{destination.name}</span>
+                <span>{destination.travelTime}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <p class="muted location__note">{locationIntro.note}</p>
+      </div>
+    </div>
+  </div>
+</Scene>
+
+<style>
+  .location__inner {
+    display: grid;
+    gap: var(--block-space);
+    padding-block: var(--section-space);
+  }
+
+  .location__detail {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  .location__list-label {
+    margin-bottom: 1.25rem;
+    font-family: var(--font-text);
+  }
+
+  .location__list {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .location__list button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    min-height: 3.75rem;
+    padding: 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: none;
+    text-align: left;
+    transition:
+      color var(--duration-quick) ease,
+      padding-left var(--duration-calm) var(--ease-water);
+  }
+
+  .location__list button[aria-pressed='true'] {
+    padding-left: 0.875rem;
+    color: var(--accent);
+  }
+
+  .location__note {
+    margin-top: 1.75rem;
+    font-size: var(--text-small);
+  }
+
+  @media (min-width: 56.25em) {
+    .location__detail {
+      grid-template-columns: minmax(0, 1.8fr) minmax(18rem, 1fr);
+      align-items: end;
+      gap: 5.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .location__list button {
+      transition: none;
+    }
+  }
+</style>

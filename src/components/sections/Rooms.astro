@@ -1,0 +1,202 @@
+---
+/**
+ * Rooms: the three kinds of room. Choosing a room dissolves to its picture
+ * and shows its description (scripts/ui/rooms.ts).
+ * The markup follows the standard "tabs" pattern, so it works with a keyboard
+ * and a screen reader. Without scripts all three rooms are shown one after another.
+ */
+import Media from '@/components/ui/Media.astro';
+import Scene from '@/components/ui/Scene.astro';
+import SectionIntro from '@/components/ui/SectionIntro.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import { rooms, roomsIntro } from '@/data/rooms';
+import { pageHref } from '@/data/routes';
+---
+
+<Scene id="rooms" class="rooms">
+  <div class="container rooms__inner" data-scene-body>
+    <SectionIntro scene="rooms" heading={roomsIntro.heading}>
+      <p>{roomsIntro.text}</p>
+    </SectionIntro>
+
+    <div class="rooms__chooser" data-rooms>
+      <div class="rooms__stage" data-reveal>
+        {rooms.map((room, index) => (
+          <div class="rooms__picture" data-room-picture={room.id} data-active={index === 0}>
+            <div class="rooms__picture-inner" data-parallax>
+              <Media shot={room.shot} sizes="(min-width: 56.25em) 58vw, 100vw" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="rooms__details" data-reveal>
+        <div class="rooms__tabs" role="tablist" aria-label="Kinds of room">
+          {rooms.map((room, index) => (
+            <button
+              type="button"
+              role="tab"
+              id={`room-tab-${room.id}`}
+              aria-controls={`room-panel-${room.id}`}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              data-room-tab={room.id}
+            >
+              <span class="rooms__name">{room.name}</span>
+              <span class="rooms__price">{room.priceFrom}</span>
+            </button>
+          ))}
+        </div>
+
+        {rooms.map((room) => (
+          <div
+            class="rooms__panel"
+            role="tabpanel"
+            id={`room-panel-${room.id}`}
+            aria-labelledby={`room-tab-${room.id}`}
+            data-room-panel={room.id}
+          >
+            <p>{room.description}</p>
+          </div>
+        ))}
+
+        <div class="rooms__links">
+          <TextLink href={pageHref('rooms')}>See this room</TextLink>
+          <TextLink href={pageHref('rooms')}>Compare all three</TextLink>
+        </div>
+      </div>
+    </div>
+  </div>
+</Scene>
+
+<style>
+  .rooms__inner {
+    display: grid;
+    gap: var(--block-space);
+    padding-block: var(--section-space);
+  }
+
+  .rooms__chooser {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .rooms__stage {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .rooms__picture {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .rooms__picture-inner {
+    position: absolute;
+    inset: 0;
+  }
+
+  .rooms__details {
+    display: grid;
+    align-content: start;
+    gap: 2rem;
+  }
+
+  .rooms__tabs {
+    display: grid;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .rooms__tabs button {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.125rem 1rem;
+    min-height: 2.75rem;
+    padding: 1.25rem 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: none;
+    color: var(--ink-muted);
+    text-align: left;
+    transition: color var(--duration-quick) ease;
+  }
+
+  .rooms__tabs button[aria-selected='true'] {
+    color: var(--ink);
+  }
+
+  .rooms__name {
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    line-height: 1.2;
+  }
+
+  .rooms__price {
+    font-size: var(--text-small);
+  }
+
+  .rooms__panel p {
+    max-width: 27rem;
+  }
+
+  .rooms__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 2.25rem;
+  }
+
+  /* With scripts running, the pictures are stacked and cross-fade. */
+  :global(html.js) .rooms__stage {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--surface-raised);
+  }
+
+  :global(html.js) .rooms__picture {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    opacity: 0;
+    transform: scale(1.06);
+    transition:
+      opacity 1.2s ease,
+      transform 2.6s var(--ease-water);
+  }
+
+  :global(html.js) .rooms__picture[data-active] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Keeps the text block from jumping as descriptions change length. */
+  :global(html.js) .rooms__panel {
+    min-height: 8.5rem;
+  }
+
+  @media (min-width: 56.25em) {
+    .rooms__chooser {
+      grid-template-columns: minmax(0, 1.65fr) minmax(20rem, 1fr);
+      align-items: end;
+      gap: 5.5rem;
+    }
+
+    :global(html.js) .rooms__stage {
+      aspect-ratio: 16 / 11;
+    }
+
+    .rooms__details {
+      gap: 2.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .rooms__picture {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

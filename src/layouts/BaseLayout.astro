@@ -1,0 +1,93 @@
+---
+/**
+ * BaseLayout: the HTML shell shared by every page.
+ * It loads fonts and base styles, prints the color themes, sets the page's
+ * search and sharing details, and starts the page script.
+ */
+import '@fontsource/instrument-serif/latin-400.css';
+import '@fontsource/instrument-serif/latin-400-italic.css';
+import '@fontsource-variable/hanken-grotesk/wght.css';
+import '@fontsource/noto-serif-sinhala/sinhala-400.css';
+import 'lenis/dist/lenis.css';
+import '@/styles/tokens.css';
+import '@/styles/base.css';
+
+import displayFontUrl from '@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteMenu from '@/components/layout/SiteMenu.astro';
+import { site } from '@/data/site';
+import { themeStyles } from '@/data/themes';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={site.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {!site.allowIndexing && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="theme-color" content="#c9d2d6" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- The heading typeface is needed for the first screen, so fetch it early. -->
+    <link rel="preload" href={displayFontUrl} as="font" type="font/woff2" crossorigin />
+    <slot name="head" />
+
+    <!-- Lets the styles know that scripts are running, before the page is drawn. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    <style is:inline set:html={themeStyles()}></style>
+  </head>
+  <body data-theme="dawn">
+    <a class="skip-link" href="#main">
+      Skip to the main content
+    </a>
+    <SiteHeader />
+    <SiteMenu />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+
+    <script>
+      import '@/scripts/main';
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: calc(var(--layer-menu) + 1);
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-charcoal);
+    color: var(--color-plaster);
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
+</style>

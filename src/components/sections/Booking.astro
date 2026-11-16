@@ -1,0 +1,280 @@
+---
+/**
+ * Booking ("Book a stay"): the date form, the reasons to book directly,
+ * and the questions guests ask before they come.
+ *
+ * No booking engine is connected yet. Until `site.booking.engineUrl` is set,
+ * submitting the form opens an email enquiry with the chosen dates
+ * (scripts/ui/enquiry.ts). The questions use <details>, so they open and
+ * close without any script.
+ */
+import Scene from '@/components/ui/Scene.astro';
+import { bookingIntro, directBenefits, faqs, guestOptions } from '@/data/booking';
+import { getScene } from '@/data/scenes';
+import { site } from '@/data/site';
+
+const scene = getScene('book');
+---
+
+<Scene id="book" class="booking">
+  <div class="container booking__inner" data-scene-body>
+    <div class="booking__lead">
+      <div class="booking__titles">
+        <p class="label" data-reveal>
+          {scene.label}
+        </p>
+        <h2 id="book-title" class="booking__heading" data-split-lines>
+          {bookingIntro.heading}
+        </h2>
+      </div>
+
+      <form
+        class="booking__form"
+        data-booking-form
+        data-engine-url={site.booking.engineUrl}
+        data-enquiry-email={site.contact.email}
+        data-reveal
+      >
+        <label class="booking__field">
+          <span>Arriving</span>
+          <input type="date" name="arrive" required data-booking-arrive />
+        </label>
+        <label class="booking__field">
+          <span>Leaving</span>
+          <input type="date" name="leave" required data-booking-leave />
+        </label>
+        <label class="booking__field booking__field--guests">
+          <span>Guests</span>
+          <select name="guests">
+            {guestOptions.map((option) => (
+              <option>{option}</option>
+            ))}
+          </select>
+        </label>
+        <button class="button booking__submit" type="submit">
+          Check availability
+        </button>
+        <p class="booking__status muted" role="status" data-booking-status></p>
+      </form>
+    </div>
+
+    <div class="booking__group">
+      <h3 class="label booking__group-label" data-reveal>
+        Why book with us directly
+      </h3>
+      <ul class="booking__benefits" data-reveal>
+        {directBenefits.map((benefit) => (
+          <li>
+            <h4>{benefit.title}</h4>
+            <p class="muted">{benefit.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="booking__group">
+      <h3 class="label booking__group-label" data-reveal>
+        Before you come
+      </h3>
+      <div class="booking__faqs" data-reveal>
+        {faqs.map((faq) => (
+          <details>
+            <summary>
+              <span>{faq.question}</span>
+              <span class="booking__faq-mark" aria-hidden="true" />
+            </summary>
+            <p class="muted">{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</Scene>
+
+<style>
+  .booking__inner {
+    display: grid;
+    gap: var(--block-space);
+    padding-block: var(--section-space);
+  }
+
+  .booking__lead {
+    display: grid;
+    gap: clamp(2.5rem, 4vw, 3.5rem);
+  }
+
+  .booking__titles {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .booking__heading {
+    font-size: var(--text-display);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .booking__form {
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--surface-raised);
+  }
+
+  .booking__field {
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-fine);
+  }
+
+  .booking__field--guests,
+  .booking__submit,
+  .booking__status {
+    grid-column: 1 / -1;
+  }
+
+  .booking__field input,
+  .booking__field select {
+    width: 100%;
+    /* Date fields refuse to shrink below their natural width without this. */
+    min-width: 0;
+    height: var(--control-height);
+    padding: 0 0.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 1rem;
+    color-scheme: dark;
+  }
+
+  .booking__status:empty {
+    display: none;
+  }
+
+  .booking__group {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .booking__group-label {
+    font-family: var(--font-text);
+  }
+
+  .booking__benefits {
+    display: grid;
+    gap: 2.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .booking__benefits li {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+  }
+
+  .booking__benefits h4 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .booking__faqs {
+    max-width: 51rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .booking__faqs details {
+    border-top: 1px solid var(--line);
+  }
+
+  .booking__faqs summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4.75rem;
+    padding-block: 0.75rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.4375rem, 2vw, 1.625rem);
+    line-height: 1.2;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .booking__faqs summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* A plus sign that turns into a minus sign when the answer is open. */
+  .booking__faq-mark {
+    position: relative;
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .booking__faq-mark::before,
+  .booking__faq-mark::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1px;
+    background: currentColor;
+    transition: transform var(--duration-quick) ease;
+  }
+
+  .booking__faq-mark::after {
+    transform: rotate(90deg);
+  }
+
+  details[open] .booking__faq-mark::after {
+    transform: rotate(0deg);
+  }
+
+  .booking__faqs details p {
+    max-width: 37.5rem;
+    padding-bottom: 2rem;
+  }
+
+  /* From a large phone up, the two dates sit side by side. */
+  @media (min-width: 30em) {
+    .booking__form {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 56.25em) {
+    .booking__form {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      align-items: end;
+      gap: 1.25rem;
+      padding: 2rem;
+    }
+
+    .booking__field--guests,
+    .booking__submit {
+      grid-column: auto;
+    }
+
+    .booking__group {
+      grid-template-columns: var(--label-column) minmax(0, 1fr);
+      gap: 4rem;
+    }
+
+    .booking__group-label {
+      padding-top: 0.5rem;
+    }
+
+    .booking__benefits {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4rem;
+    }
+  }
+</style>

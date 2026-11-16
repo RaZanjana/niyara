@@ -1,0 +1,183 @@
+---
+/**
+ * Experiences ("Things to do"): a row of cards that scrolls sideways.
+ * The row is a normal scrolling area, so it works by swipe, trackpad and
+ * keyboard. The arrow buttons move it one card at a time (scripts/ui/scroller.ts).
+ */
+import Media from '@/components/ui/Media.astro';
+import Scene from '@/components/ui/Scene.astro';
+import SectionIntro from '@/components/ui/SectionIntro.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import { experiences, experiencesIntro } from '@/data/experiences';
+import { pageHref } from '@/data/routes';
+---
+
+<Scene id="things-to-do" class="experiences">
+  <div class="experiences__inner" data-scene-body>
+    <div class="container">
+      <SectionIntro scene="things-to-do" heading={experiencesIntro.heading}>
+        <p>{experiencesIntro.text}</p>
+      </SectionIntro>
+    </div>
+
+    <div class="experiences__row" data-scroller data-reveal>
+      <ul
+        class="experiences__track no-scrollbar"
+        data-scroller-track
+        tabindex="0"
+        aria-label="Things to do. Scroll sideways for more."
+      >
+        {experiences.map((experience) => (
+          <li class="experiences__card">
+            <div class="experiences__picture">
+              <Media shot={experience.shot} sizes="(min-width: 56.25em) 23rem, 75vw" />
+            </div>
+            <h3 class="experiences__title">{experience.title}</h3>
+            <p>{experience.text}</p>
+          </li>
+        ))}
+      </ul>
+
+      <div class="container experiences__controls">
+        <button
+          type="button"
+          class="round-button"
+          data-scroller-previous
+          aria-label="Previous things to do"
+        >
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M17 10H3M8 5L3 10L8 15" stroke="currentColor"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="round-button"
+          data-scroller-next
+          aria-label="More things to do"
+        >
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 10H17M12 5L17 10L12 15" stroke="currentColor"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="experiences__planner" data-reveal>
+        <p class="experiences__planner-note">{experiencesIntro.plannerNote}</p>
+        <div class="experiences__links">
+          <TextLink href={pageHref('experiences')}>Ask us to plan your days</TextLink>
+          <TextLink href={pageHref('experiences')}>Everything there is to do</TextLink>
+        </div>
+      </div>
+    </div>
+  </div>
+</Scene>
+
+<style>
+  .experiences__inner {
+    display: grid;
+    gap: var(--block-space);
+    padding-block: var(--section-space);
+  }
+
+  .experiences__row {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .experiences__track {
+    display: flex;
+    gap: clamp(1rem, 3.4vw, 3rem);
+    margin: 0;
+    padding: 0 var(--gutter);
+    overflow-x: auto;
+    list-style: none;
+    scroll-padding-inline: var(--gutter);
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+  }
+
+  .experiences__card {
+    display: grid;
+    flex: 0 0 min(75vw, 22.5rem);
+    align-content: start;
+    gap: 1rem;
+    scroll-snap-align: start;
+  }
+
+  .experiences__picture {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+  }
+
+  .experiences__title {
+    font-size: var(--text-heading);
+    line-height: 1.2;
+  }
+
+  .experiences__controls {
+    display: none;
+    gap: 0.75rem;
+  }
+
+  /* The arrow buttons only help where there is a mouse, and only with scripts. */
+  @media (hover: hover) {
+    :global(html.js) .experiences__controls {
+      display: flex;
+    }
+  }
+
+  .experiences__planner {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .experiences__planner-note {
+    max-width: var(--measure);
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    line-height: 1.25;
+  }
+
+  .experiences__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 2.25rem;
+  }
+
+  @media (min-width: 56.25em) {
+    .experiences__planner {
+      margin-left: calc(var(--label-column) + 4rem);
+    }
+  }
+</style>
+
+<style is:global>
+  /* A round icon button, shared by the card row and the gallery. */
+  .round-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-height);
+    height: var(--control-height);
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: none;
+    transition:
+      border-color var(--duration-quick) ease,
+      opacity var(--duration-quick) ease;
+  }
+
+  .round-button:hover {
+    border-color: var(--ink);
+  }
+
+  .round-button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+</style>

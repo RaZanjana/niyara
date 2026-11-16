@@ -1,0 +1,25 @@
+---
+/**
+ * HeroPreload: asks the browser to fetch the first film frame of the hero
+ * straight away, in the size that fits the screen. Goes in the page <head>.
+ */
+import sequences from '@/data/frame-sequences.json';
+import { frameUrl } from '@/scripts/lib/frames';
+
+const { desktop, mobile, digits, extension } = sequences.hero;
+---
+
+<link
+  rel="preload"
+  as="image"
+  href={frameUrl(mobile.path, 0, digits, extension)}
+  media="(max-width: 56.24em)"
+  fetchpriority="high"
+/>
+<link
+  rel="preload"
+  as="image"
+  href={frameUrl(desktop.path, 0, digits, extension)}
+  media="(min-width: 56.25em)"
+  fetchpriority="high"
+/>

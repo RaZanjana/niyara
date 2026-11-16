@@ -1,0 +1,127 @@
+---
+/**
+ * Pool: the stepped granite pool seen from above.
+ * Moving a pointer or a finger over the picture sends ripples across the
+ * water (scripts/ui/pool.ts).
+ */
+import Media from '@/components/ui/Media.astro';
+import Scene from '@/components/ui/Scene.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import { pageHref } from '@/data/routes';
+import { getScene } from '@/data/scenes';
+
+const scene = getScene('pool');
+---
+
+<Scene id="pool" class="pool">
+  <div class="pool__inner" data-scene-body>
+    <div class="pool__picture feather-y" data-ripples>
+      <div class="pool__picture-inner" data-parallax>
+        <Media shot="S10" sizes="100vw" />
+      </div>
+      <span class="pool__ripple pool__ripple--near" data-ripple aria-hidden="true"></span>
+      <span class="pool__ripple pool__ripple--far" data-ripple aria-hidden="true"></span>
+    </div>
+
+    <div class="pool__panel" data-reveal>
+      <p class="label">{scene.label}</p>
+      <h2 id="pool-title" class="pool__heading">
+        By midday it is too hot to do anything but swim.
+      </h2>
+      <p>
+        So we built the pool for it. It is cut from local granite and stepped on all four sides,
+        like the bathing ponds the old kings left in the city, under trees old enough to keep it in
+        shade until three.
+      </p>
+      <TextLink href={pageHref('wellness')}>The pool and the spa</TextLink>
+    </div>
+  </div>
+</Scene>
+
+<style>
+  .pool__inner {
+    display: grid;
+  }
+
+  .pool__picture {
+    position: relative;
+    height: 34rem;
+    overflow: hidden;
+  }
+
+  .pool__picture-inner {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Two rings that follow the pointer, the wider one more slowly. */
+  .pool__ripple {
+    position: absolute;
+    top: var(--y, 50%);
+    left: var(--x, 50%);
+    width: var(--size);
+    height: var(--size);
+    margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+    border: 1px solid rgb(255 255 255 / 65%);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      top var(--speed) var(--ease-water),
+      left var(--speed) var(--ease-water),
+      opacity 0.8s ease;
+  }
+
+  .pool__ripple--near {
+    --size: 5.25rem;
+    --speed: 0.7s;
+  }
+
+  .pool__ripple--far {
+    --size: 12rem;
+    --speed: 1.4s;
+    border-color: rgb(255 255 255 / 35%);
+  }
+
+  .pool__picture[data-rippling] .pool__ripple {
+    opacity: 1;
+  }
+
+  .pool__panel {
+    display: grid;
+    justify-items: start;
+    gap: 1.5rem;
+    padding: 0.5rem var(--gutter) var(--section-space);
+  }
+
+  .pool__heading {
+    font-size: var(--text-title);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+  }
+
+  @media (min-width: 56.25em) {
+    .pool__inner {
+      position: relative;
+    }
+
+    .pool__picture {
+      height: clamp(45rem, 62vw, 56rem);
+    }
+
+    .pool__panel {
+      position: absolute;
+      bottom: clamp(9.5rem, 16vw, 13.75rem);
+      left: clamp(1rem, 5vw, 5.5rem);
+      max-width: 26.25rem;
+      padding: 2rem;
+      background: var(--surface);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pool__ripple {
+      display: none;
+    }
+  }
+</style>

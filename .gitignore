@@ -1,0 +1,15 @@
+# Dependencies and build output
+node_modules
+dist
+.astro
+
+# Local settings
+.env
+.env.*
+!.env.example
+.vercel
+.DS_Store
+
+# Stand-in film frames. They are created by "npm run placeholders".
+# Remove this line when the real film frames are added to the project.
+public/frames

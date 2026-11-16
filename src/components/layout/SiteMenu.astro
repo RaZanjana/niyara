@@ -1,0 +1,149 @@
+---
+/**
+ * SiteMenu: the full-screen menu for narrow screens.
+ * It is a native <dialog>, so the browser keeps keyboard focus inside it and
+ * closes it with the Escape key. scripts/ui/menu.ts opens and closes it.
+ */
+import Wordmark from '@/components/ui/Wordmark.astro';
+import { bookHref, menuNav } from '@/data/navigation';
+import { site } from '@/data/site';
+---
+
+<dialog class="menu" id="site-menu" data-menu data-theme="night" aria-label="Menu">
+  <div class="menu__bar">
+    <Wordmark />
+    <button class="menu__close" type="button" data-menu-close>
+      <span>Close</span>
+      <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.5"></path>
+      </svg>
+    </button>
+  </div>
+
+  <nav class="menu__nav" aria-label="Menu">
+    <ul>
+      {menuNav.map((link) => (
+        <li>
+          <a href={link.href} data-menu-link>
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <div class="menu__actions">
+    <a class="button button--block" href={bookHref} data-menu-link>
+      Book a stay
+    </a>
+    <a class="menu__call" href={site.contact.phoneHref}>
+      Or call {site.contact.phone}
+    </a>
+  </div>
+</dialog>
+
+<style>
+  .menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0 var(--gutter) 2.25rem;
+    border: 0;
+    background: var(--surface);
+    color: var(--ink);
+    opacity: 0;
+    transition:
+      opacity 0.45s ease,
+      display 0.45s allow-discrete,
+      overlay 0.45s allow-discrete;
+  }
+
+  .menu[open] {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+  }
+
+  @starting-style {
+    .menu[open] {
+      opacity: 0;
+    }
+  }
+
+  .menu::backdrop {
+    background: var(--color-charcoal);
+  }
+
+  .menu__bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+  }
+
+  .menu__close {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    height: 2.75rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: none;
+    font-size: var(--text-small);
+    font-weight: 500;
+  }
+
+  .menu__nav {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+  }
+
+  .menu__nav ul {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu__nav a {
+    display: flex;
+    align-items: center;
+    min-height: 4rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 9vw, 2.75rem);
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .menu__actions {
+    display: grid;
+    flex: none;
+    gap: 0.5rem;
+    max-width: 26rem;
+  }
+
+  .menu__call {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu {
+      transition: none;
+    }
+  }
+</style>

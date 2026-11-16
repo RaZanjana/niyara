@@ -1,0 +1,64 @@
+/**
+ * Design tokens: the fixed values every component uses.
+ *
+ * Colors that change with the time of day are NOT here. They come from
+ * `src/data/themes.ts` and are set per section with `data-theme`.
+ */
+
+:root {
+  /* Material colors. These never change with the theme. */
+  --color-mist: #c9d2d6;
+  --color-plaster: #f3eee6;
+  --color-brick: #a65a3a;
+  --color-brick-deep: #8c4a31;
+  --color-shade: #2f3b34;
+  --color-granite: #8a8780;
+  --color-charcoal: #14181a;
+  --color-lamp: #e0a458;
+  --color-on-photo: #fbf8f3;
+
+  /* Typefaces */
+  --font-display: 'Instrument Serif', 'Cormorant Garamond', Georgia, serif;
+  --font-text: 'Hanken Grotesk Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sinhala: 'Noto Serif Sinhala', serif;
+
+  /* Type sizes. The clamp() values grow smoothly from phone to desktop. */
+  --text-hero: clamp(4.75rem, 8.4vw, 8rem);
+  --text-display: clamp(2.375rem, 4.6vw, 4.25rem);
+  --text-title: clamp(1.875rem, 3.4vw, 3.125rem);
+  --text-heading: clamp(1.75rem, 2.2vw, 1.875rem);
+  --text-lead: clamp(1.125rem, 1.4vw, 1.25rem);
+  --text-body: clamp(1rem, 1.2vw, 1.0625rem);
+  --text-small: 0.9375rem;
+  --text-fine: 0.875rem;
+
+  /* Space */
+  --gutter: clamp(1.25rem, 6.5vw, 7rem);
+  --section-space: clamp(6.5rem, 13vw, 13rem);
+  --block-space: clamp(3.5rem, 8vw, 8rem);
+  --content-max: 85rem;
+  --measure: 34rem;
+  --label-column: 12.5rem;
+  --header-height: 4rem;
+
+  /* Shape */
+  --radius-pill: 999px;
+  --control-height: 3.25rem;
+
+  /* Motion. Slow and even, like still water. Nothing bounces. */
+  --ease-water: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-quick: 0.3s;
+  --duration-calm: 0.7s;
+  --duration-slow: 1.4s;
+
+  /* Layers, lowest first */
+  --layer-header: 10;
+  --layer-menu: 20;
+}
+
+@media (min-width: 56.25em) {
+  :root {
+    --header-height: 4.75rem;
+  }
+}

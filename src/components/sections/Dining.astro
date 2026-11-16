@@ -1,0 +1,116 @@
+---
+/**
+ * Dining: the restaurant at dusk. Two pictures taken from the same spot,
+ * one at dusk and one at night, cross-fade as the visitor scrolls, so the
+ * sky darkens and the lamps come on (scripts/scenes/dining.ts).
+ * Without scripts the dusk picture is shown.
+ */
+import Media from '@/components/ui/Media.astro';
+import Scene from '@/components/ui/Scene.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import { pageHref } from '@/data/routes';
+import { getScene } from '@/data/scenes';
+
+const scene = getScene('dining');
+const pictureSizes = '(min-width: 56.25em) 60vw, 100vw';
+---
+
+<Scene id="dining" class="dining">
+  <div class="dining__inner" data-scene-body>
+    <div class="dining__picture" data-dining>
+      <div class="dining__layer" data-parallax>
+        <Media shot="S15" sizes={pictureSizes} />
+      </div>
+      <div class="dining__layer dining__layer--night" data-dining-night>
+        <Media shot="S16" sizes={pictureSizes} decorative />
+      </div>
+    </div>
+
+    <div class="dining__text" data-reveal>
+      <p class="label">{scene.label}</p>
+      <h2 id="dining-title" class="dining__heading">
+        Dinner is on the bank, as the lamps are lit.
+      </h2>
+      <p>
+        The Ambalama is our one restaurant, open on three sides to the water. The cooking belongs to
+        this part of the island: red rice from the fields next door, fish from the reservoir,
+        buffalo curd with palm treacle. Most of it is cooked over wood.
+      </p>
+      <p class="muted dining__note">
+        On full moon days no alcohol is served anywhere in Sri Lanka, including here. We make a very
+        good lime and ginger soda instead.
+      </p>
+      <TextLink href={pageHref('dining')}>Menus and opening hours</TextLink>
+    </div>
+  </div>
+</Scene>
+
+<style>
+  .dining__inner {
+    display: grid;
+  }
+
+  .dining__picture {
+    position: relative;
+    height: 32.5rem;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+  }
+
+  .dining__layer {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The night picture is hidden until the scroll script fades it in. */
+  .dining__layer--night {
+    opacity: 0;
+  }
+
+  .dining__text {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 1.5rem;
+    padding: 0.5rem var(--gutter) var(--section-space);
+  }
+
+  .dining__text p {
+    max-width: 27.5rem;
+  }
+
+  .dining__heading {
+    font-size: var(--text-title);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+  }
+
+  .dining__note {
+    font-size: var(--text-small);
+  }
+
+  @media (min-width: 56.25em) {
+    .dining__inner {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      min-height: clamp(47.5rem, 62vw, 57.5rem);
+    }
+
+    .dining__picture {
+      height: auto;
+      /* Fade the top, the bottom and the right edge, where the text begins. */
+      -webkit-mask-image:
+        linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent),
+        linear-gradient(to right, #000 70%, transparent);
+      -webkit-mask-composite: source-in;
+      mask-image:
+        linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent),
+        linear-gradient(to right, #000 70%, transparent);
+      mask-composite: intersect;
+    }
+
+    .dining__text {
+      padding: var(--section-space) var(--gutter) var(--section-space) 2rem;
+    }
+  }
+</style>

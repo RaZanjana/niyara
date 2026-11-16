@@ -1,0 +1,41 @@
+/**
+ * Smooth scrolling for mouse wheels (Lenis).
+ *
+ * Only switched on for desktop pointers, and only when the visitor has not
+ * asked for reduced motion. Phones and tablets keep their own native scrolling,
+ * which is already smooth and must not be interfered with.
+ */
+import Lenis from 'lenis';
+import { gsap, matches, queries, ScrollTrigger } from './motion';
+
+export interface ScrollLock {
+  /** Stops the page from scrolling, for example while the menu is open. */
+  lock(): void;
+  unlock(): void;
+}
+
+const LOCKED_CLASS = 'is-scroll-locked';
+
+export function initSmoothScroll(): ScrollLock {
+  const root = document.documentElement;
+  let lenis: Lenis | undefined;
+
+  if (matches(queries.finePointer) && matches(queries.fullMotion)) {
+    lenis = new Lenis({ anchors: true });
+    // Keep the scroll animations in step with the smoothed scroll position.
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis?.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  return {
+    lock() {
+      lenis?.stop();
+      root.classList.add(LOCKED_CLASS);
+    },
+    unlock() {
+      lenis?.start();
+      root.classList.remove(LOCKED_CLASS);
+    },
+  };
+}

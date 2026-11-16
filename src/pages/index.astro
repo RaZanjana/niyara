@@ -1,0 +1,31 @@
+---
+/**
+ * The homepage. One day at Niyara, from first light to night.
+ * The sections appear in the same order as `src/data/scenes.ts`.
+ */
+import Arrival from '@/components/sections/Arrival.astro';
+import Booking from '@/components/sections/Booking.astro';
+import Dining from '@/components/sections/Dining.astro';
+import Experiences from '@/components/sections/Experiences.astro';
+import Gallery from '@/components/sections/Gallery.astro';
+import Hero from '@/components/sections/Hero.astro';
+import HeroPreload from '@/components/sections/HeroPreload.astro';
+import Location from '@/components/sections/Location.astro';
+import Pool from '@/components/sections/Pool.astro';
+import Rooms from '@/components/sections/Rooms.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout>
+  <HeroPreload slot="head" />
+
+  <Hero />
+  <Location />
+  <Arrival />
+  <Rooms />
+  <Pool />
+  <Experiences />
+  <Dining />
+  <Gallery />
+  <Booking />
+</BaseLayout>

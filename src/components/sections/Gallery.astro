@@ -1,0 +1,346 @@
+---
+/**
+ * Gallery ("Photographs"): one large picture at a time.
+ *
+ * - Arrows, thumbnails, a swipe, or the left and right keys change the picture.
+ * - The picture closes to a thin horizontal line and the next one opens from
+ *   it. The line echoes the "water line" under the wordmark.
+ * - On a desktop, moving the pointer across a picture shifts it slightly, as
+ *   if looking around.
+ *
+ * The behavior is in scripts/ui/gallery.ts. Without scripts the pictures are
+ * shown as a row that scrolls sideways.
+ */
+import Media from '@/components/ui/Media.astro';
+import Scene from '@/components/ui/Scene.astro';
+import TextLink from '@/components/ui/TextLink.astro';
+import { galleryIntro, gallerySlides } from '@/data/gallery';
+import { pageHref } from '@/data/routes';
+import { getScene } from '@/data/scenes';
+
+const scene = getScene('photographs');
+const first = gallerySlides[0];
+---
+
+<Scene id="photographs" class="gallery">
+  <div class="container gallery__inner" data-scene-body>
+    <header class="gallery__header">
+      <div class="gallery__titles">
+        <p class="label" data-reveal>
+          {scene.label}
+        </p>
+        <h2 id="photographs-title" class="gallery__heading" data-split-lines>
+          {galleryIntro.heading}
+        </h2>
+      </div>
+      <p class="muted gallery__hint" data-reveal>
+        {galleryIntro.hint}
+      </p>
+    </header>
+
+    <div class="gallery__viewer" data-gallery data-reveal>
+      <div
+        class="gallery__stage no-scrollbar"
+        data-gallery-stage
+        tabindex="0"
+        role="group"
+        aria-roledescription="carousel"
+        aria-label="Photographs of Niyara"
+      >
+        {gallerySlides.map((slide, index) => (
+          <figure
+            class="gallery__slide"
+            data-gallery-slide
+            data-active={index === 0}
+            data-title={slide.title}
+            data-caption={slide.caption}
+          >
+            <div class="gallery__picture" data-gallery-picture>
+              <Media shot={slide.shot} sizes="(min-width: 85em) 85rem, 100vw" />
+            </div>
+            <figcaption class="gallery__slide-caption">
+              <strong>{slide.title}.</strong> {slide.caption}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div class="gallery__bar">
+        <div class="gallery__caption" aria-live="polite">
+          <p class="gallery__caption-title" data-gallery-title>
+            {first?.title}
+          </p>
+          <p class="muted" data-gallery-caption>
+            {first?.caption}
+          </p>
+        </div>
+        <div class="gallery__controls">
+          <p class="muted gallery__count" data-gallery-count>
+            1 of {gallerySlides.length}
+          </p>
+          <button
+            type="button"
+            class="round-button"
+            data-gallery-previous
+            aria-label="Previous photograph"
+          >
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M17 10H3M8 5L3 10L8 15" stroke="currentColor"></path>
+            </svg>
+          </button>
+          <button type="button" class="round-button" data-gallery-next aria-label="Next photograph">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M3 10H17M12 5L17 10L12 15" stroke="currentColor"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <ul class="gallery__thumbs no-scrollbar">
+        {gallerySlides.map((slide, index) => (
+          <li>
+            <button
+              type="button"
+              data-gallery-thumb
+              aria-label={slide.title}
+              aria-current={index === 0 ? 'true' : 'false'}
+            >
+              <Media shot={slide.shot} sizes="8rem" decorative />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <TextLink href={pageHref('photographs')}>See all the photographs</TextLink>
+  </div>
+</Scene>
+
+<style>
+  .gallery__inner {
+    display: grid;
+    justify-items: start;
+    gap: clamp(2.5rem, 6vw, 5.5rem);
+    padding-block: var(--section-space);
+  }
+
+  .gallery__header {
+    display: grid;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .gallery__titles {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .gallery__heading {
+    font-size: var(--text-display);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .gallery__hint {
+    max-width: 20rem;
+    font-size: var(--text-small);
+  }
+
+  /* On touch screens there is no pointer to move, so the hint would be wrong. */
+  @media (hover: none) {
+    .gallery__hint {
+      display: none;
+    }
+  }
+
+  .gallery__viewer {
+    display: grid;
+    gap: 1.75rem;
+    width: 100%;
+  }
+
+  /* ---- Without scripts: a simple row that scrolls sideways ---- */
+
+  .gallery__stage {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .gallery__slide {
+    flex: 0 0 88%;
+    scroll-snap-align: start;
+  }
+
+  .gallery__picture {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+
+  .gallery__slide-caption {
+    margin-top: 0.75rem;
+    color: var(--ink-muted);
+    font-size: var(--text-small);
+  }
+
+  .gallery__bar,
+  .gallery__thumbs {
+    display: none;
+  }
+
+  /* ---- With scripts: one picture at a time ---- */
+
+  :global(html.js) .gallery__stage {
+    position: relative;
+    display: block;
+    height: min(78svh, 46.25rem);
+    min-height: 26rem;
+    overflow: hidden;
+    background: #0b0d0e;
+    touch-action: pan-y;
+  }
+
+  :global(html.js) .gallery__slide {
+    position: absolute;
+    inset: 0;
+    /* Closed to a line across the middle. */
+    clip-path: inset(50% 0 50% 0);
+    transition: clip-path var(--duration-slow) var(--ease-in-out);
+  }
+
+  :global(html.js) .gallery__slide[data-active] {
+    z-index: 1;
+    clip-path: inset(0 0 0 0);
+  }
+
+  :global(html.js) .gallery__picture {
+    position: absolute;
+    /* A little larger than the frame, so it can shift without showing an edge. */
+    inset: -3%;
+    aspect-ratio: auto;
+    transform: translate(var(--look-x, 0), var(--look-y, 0)) scale(1.08);
+    transition: transform 5s var(--ease-water);
+  }
+
+  :global(html.js) .gallery__slide[data-active] .gallery__picture {
+    transform: translate(var(--look-x, 0), var(--look-y, 0)) scale(1);
+  }
+
+  :global(html.js) .gallery__stage[data-looking] .gallery__picture {
+    transition-duration: 0.7s;
+  }
+
+  :global(html.js) .gallery__slide-caption {
+    display: none;
+  }
+
+  :global(html.js) .gallery__bar {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .gallery__caption {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    min-height: 7.5rem;
+  }
+
+  .gallery__caption-title {
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    line-height: 1.2;
+  }
+
+  .gallery__caption p:last-child {
+    max-width: 32.5rem;
+  }
+
+  .gallery__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .gallery__count {
+    margin-right: auto;
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  :global(html.js) .gallery__thumbs {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    list-style: none;
+  }
+
+  .gallery__thumbs li {
+    flex: 1 0 4.75rem;
+  }
+
+  .gallery__thumbs button {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 4.75rem;
+    padding: 0;
+    border: 0;
+    border-bottom: 2px solid var(--line);
+    background: none;
+    opacity: 0.5;
+    transition:
+      opacity var(--duration-calm) ease,
+      border-color var(--duration-calm) ease;
+  }
+
+  .gallery__thumbs button :global(.media) {
+    bottom: 0.625rem;
+  }
+
+  .gallery__thumbs button[aria-current='true'] {
+    border-color: var(--accent);
+    opacity: 1;
+  }
+
+  @media (min-width: 56.25em) {
+    .gallery__header {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 4rem;
+    }
+
+    :global(html.js) .gallery__bar {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 4rem;
+    }
+
+    .gallery__caption {
+      min-height: 6rem;
+    }
+
+    .gallery__count {
+      margin-right: 0.5rem;
+    }
+
+    .gallery__thumbs {
+      gap: 1rem;
+    }
+
+    .gallery__thumbs button {
+      height: 5.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .gallery__slide,
+    :global(html.js) .gallery__picture {
+      transition: none;
+    }
+  }
+</style>

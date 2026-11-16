@@ -1,0 +1,47 @@
+---
+/**
+ * Scene: the wrapper for one full-width section of the homepage.
+ *
+ * It sets the section's anchor id and its time-of-day theme from
+ * `src/data/scenes.ts`, and marks it with `data-scene` so the scroll scripts
+ * can find it. Put the section's content inside.
+ *
+ * Any other attribute is passed on to the <section>. This matters for
+ * styling: Astro marks each component's elements with a hidden attribute, and
+ * passing it on is what lets a section style its own wrapper by class name.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import { getScene, type SceneId } from '@/data/scenes';
+
+interface Props extends Omit<HTMLAttributes<'section'>, 'id'> {
+  id: SceneId;
+}
+
+const { id, class: className, ...rest } = Astro.props;
+const scene = getScene(id);
+---
+
+<section
+  id={scene.id}
+  class:list={['scene', className]}
+  data-scene
+  data-theme={scene.theme}
+  aria-labelledby={`${scene.id}-title`}
+  {...rest}
+>
+  <slot />
+</section>
+
+<style>
+  .scene {
+    position: relative;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  /* When the background blend is running, the page behind shows through and
+     carries the color, so one section can dissolve into the next. */
+  :global(html[data-atmosphere='blend']) .scene {
+    background: transparent;
+  }
+</style>

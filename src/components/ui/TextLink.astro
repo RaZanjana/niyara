@@ -1,0 +1,43 @@
+---
+/**
+ * TextLink: an inline link with a thin underline that draws away on hover.
+ * Tall enough to tap comfortably on a phone.
+ */
+interface Props {
+  href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a class="text-link" href={href}>
+  <span class="text-link__text">
+    <slot />
+  </span>
+</a>
+
+<style>
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3rem;
+    text-decoration: none;
+  }
+
+  .text-link__text {
+    padding-bottom: 0.3rem;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+    transition: background-size var(--duration-calm) var(--ease-water);
+  }
+
+  .text-link:hover .text-link__text {
+    background-position: 100% 100%;
+    background-size: 0 1px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-link__text {
+      transition: none;
+    }
+  }
+</style>
