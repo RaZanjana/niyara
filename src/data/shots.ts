@@ -41,23 +41,23 @@ export const shots = {
   },
   S08: {
     name: 'Bund Villa, the pool terrace',
-    alt: 'A private granite plunge pool at the tip of the bank, with the reservoir directly beyond it.',
+    alt: 'A private plunge pool lined in green stone at the tip of the bank, with two loungers and the reservoir directly beyond it.',
     tone: '#d3dadd',
   },
   S10: {
-    name: 'The pool from above',
-    alt: 'A granite pool seen from directly above, stepped on all four sides, with tree shadow across one corner.',
+    name: 'The pool',
+    alt: 'A long pool lined in dark green stone, looking out over rice fields, with a tiled pavilion of sun loungers beside it.',
     tone: '#d8d3c8',
     focus: '64% 50%',
   },
   S12: {
     name: 'A walk along the reservoirs',
-    alt: 'Two small figures walking a red-earth path on a bank between two reservoirs, with egrets in the shallows.',
+    alt: 'A couple walking and laughing on a red-earth path along a bank between two reservoirs, with egrets in the shallows.',
     tone: '#a9b3a2',
   },
   S13: {
-    name: 'Lunch in the rice fields',
-    alt: 'A long table under a tree at the edge of a green rice field, with clay pots over a wood fire.',
+    name: 'The rice and curry table',
+    alt: 'A hostess in a Kandyan sari lifting the lid of a brass pot at a lunch buffet of rice and curries, in the open dining pavilion by the water.',
     tone: '#8c9a6b',
   },
   S14: {
@@ -67,7 +67,7 @@ export const shots = {
   },
   S15: {
     name: 'Dining, at dusk',
-    alt: 'The open-sided restaurant on the bank just after sunset, tables set and lanterns not yet lit.',
+    alt: 'The open-sided restaurant beside the old tree just after sunset, tables set and lanterns not yet lit.',
     tone: '#d9a07a',
   },
   S16: {
@@ -77,7 +77,7 @@ export const shots = {
   },
   S18: {
     name: 'Dinner at The Ambalama',
-    alt: 'Inside the restaurant at night, lit lanterns overhead and two guests at a table looking out to the water.',
+    alt: 'A family of four laughing over dinner by candlelight in the open dining pavilion, with lit lanterns overhead and the dark water beyond.',
     tone: '#6b4534',
   },
   S19: {
@@ -102,7 +102,7 @@ export const shots = {
   },
   S23: {
     name: 'A day in Wilpattu',
-    alt: 'A forest lake with a rim of pale sand at dawn, and spotted deer at the far edge.',
+    alt: 'Guests in a safari jeep watching a small herd of elephants walk along the edge of a forest lake.',
     tone: '#c5cdb9',
   },
 } as const satisfies Record<string, Shot>;

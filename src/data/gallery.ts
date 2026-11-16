@@ -28,7 +28,7 @@ export const gallerySlides: GallerySlide[] = [
   {
     shot: 'S10',
     title: 'The pool at midday',
-    caption: 'Granite steps on all four sides, and the shade of two old kumbuk trees.',
+    caption: 'Twenty-five metres of green stone, with the rice fields at the far end.',
   },
   {
     shot: 'S03',

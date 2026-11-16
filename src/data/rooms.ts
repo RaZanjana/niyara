@@ -20,7 +20,7 @@ export const rooms: Room[] = [
     name: 'Tank Pavilion',
     priceFrom: 'from USD 650 a night',
     description:
-      'Fourteen pavilions in a row along the bank, 68 m² each. Step off the verandah and you are at the water. For the sunrise, ask for one of numbers nine to fourteen.',
+      'Fourteen pavilions in a row along the bank, 68 m² each. Step off the verandah onto the grass and the water is ten paces away. For the sunrise, ask for one of numbers nine to fourteen.',
     shot: 'S04',
   },
   {

@@ -21,7 +21,7 @@ export const experiences: Experience[] = [
   },
   {
     title: 'A walk along the reservoirs',
-    text: 'Follow the old canal from one village reservoir to the next, with a man whose family has looked after the water here for generations.',
+    text: 'Follow the old canal from one village reservoir to the next. Go on your own, or with a man whose family has looked after the water here for generations.',
     shot: 'S12',
   },
   {
@@ -31,12 +31,12 @@ export const experiences: Experience[] = [
   },
   {
     title: 'A day in Wilpattu',
-    text: 'Sri Lanka’s largest national park is an hour away. Leopards if you are lucky, forest lakes and painted storks if you are not.',
+    text: 'Sri Lanka’s largest national park is an hour away. Elephants come down to the forest lakes most mornings. A leopard, if you are lucky.',
     shot: 'S23',
   },
   {
-    title: 'Lunch in the rice fields',
-    text: 'Rice, lake fish and seven or eight curries, cooked over a wood fire by the women of the next village and eaten in the shade.',
+    title: 'The rice and curry table',
+    text: 'Lunch at The Ambalama is laid out the way a Sri Lankan family does it for guests: red rice, lake fish and a dozen curries. Take a little of everything, then go back.',
     shot: 'S13',
   },
 ];
