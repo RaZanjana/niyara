@@ -1,28 +1,42 @@
 ---
 /**
- * Dining: the restaurant at dusk. Two pictures taken from the same spot,
- * one at dusk and one at night, cross-fade as the visitor scrolls, so the
- * sky darkens and the lamps come on (scripts/scenes/dining.ts).
+ * Dining: the restaurant at dusk. As the visitor scrolls, the sky darkens
+ * and the lamps come on (scripts/scenes/dining.ts). This is a short film
+ * drawn on the canvas, with two photographs underneath that cross-fade the
+ * same way until the film has loaded.
  * Without scripts the dusk picture is shown.
  */
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import Media from '@/components/ui/Media.astro';
 import Scene from '@/components/ui/Scene.astro';
 import TextLink from '@/components/ui/TextLink.astro';
 import { pageHref } from '@/data/routes';
+import sequences from '@/data/frame-sequences.json';
 import { getScene } from '@/data/scenes';
+import { frameUrl } from '@/scripts/lib/frames';
 
 const scene = getScene('dining');
 const pictureSizes = '(min-width: 56.25em) 60vw, 100vw';
+
+// The film is only switched on if its frames are in the project. Without
+// them, the two photographs cross-fade instead and nothing is missing.
+const { desktop, digits, extension } = sequences.dining;
+const firstFrame = path.join(process.cwd(), 'public', frameUrl(desktop.path, 0, digits, extension));
+const hasFilm = existsSync(firstFrame);
 ---
 
 <Scene id="dining" class="dining">
   <div class="dining__inner" data-scene-body>
     <div class="dining__picture" data-dining>
-      <div class="dining__layer" data-parallax>
-        <Media shot="S15" sizes={pictureSizes} />
-      </div>
-      <div class="dining__layer dining__layer--night" data-dining-night>
-        <Media shot="S16" sizes={pictureSizes} decorative />
+      <div class="dining__layers" data-parallax>
+        <div class="dining__layer">
+          <Media shot="S15" sizes={pictureSizes} />
+        </div>
+        <div class="dining__layer dining__layer--night" data-dining-night>
+          <Media shot="S16" sizes={pictureSizes} decorative />
+        </div>
+        {hasFilm && <canvas class="dining__film" data-dining-canvas aria-hidden="true" />}
       </div>
     </div>
 
@@ -32,9 +46,10 @@ const pictureSizes = '(min-width: 56.25em) 60vw, 100vw';
         Dinner is on the bank, as the lamps are lit.
       </h2>
       <p>
-        The Ambalama is our one restaurant, open on three sides to the water. The cooking belongs to
-        this part of the island: red rice from the fields next door, fish from the reservoir,
-        buffalo curd with palm treacle. Most of it is cooked over wood.
+        The Ambalama is our one restaurant: a long hall open on three sides to the water, with the
+        bar and an open kitchen along the fourth. The cooking belongs to this part of the island:
+        red rice from the fields next door, fish from the reservoir, buffalo curd with palm treacle.
+        Most of it is cooked over wood, where you can watch.
       </p>
       <p class="muted dining__note">
         On full moon days no alcohol is served anywhere in Sri Lanka, including here. We make a very
@@ -58,9 +73,23 @@ const pictureSizes = '(min-width: 56.25em) 60vw, 100vw';
     mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
   }
 
-  .dining__layer {
+  .dining__layers,
+  .dining__layer,
+  .dining__film {
     position: absolute;
     inset: 0;
+  }
+
+  /* The film covers the two photographs once its first frame is drawn. */
+  .dining__film {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .dining__film[data-ready] {
+    opacity: 1;
   }
 
   /* The night picture is hidden until the scroll script fades it in. */

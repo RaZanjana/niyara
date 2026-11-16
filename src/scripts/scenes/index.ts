@@ -9,9 +9,10 @@
 import { gsap, queries } from '../lib/motion';
 import { createArrival } from './arrival';
 import { createAtmosphere } from './atmosphere';
-import { createDiningNightfall, createMapDrawing, createParallax } from './small-effects';
+import { createDining } from './dining';
 import { createHero } from './hero';
 import { createReveals } from './reveals';
+import { createMapDrawing, createParallax } from './small-effects';
 
 export function initScrollScenes(): void {
   const root = document.documentElement;
@@ -36,7 +37,7 @@ export function initScrollScenes(): void {
           createHero({ wide }),
           createArrival({ wide }),
           createReveals(),
-          createDiningNightfall(),
+          createDining({ wide }),
           createParallax(),
           createMapDrawing(),
         );

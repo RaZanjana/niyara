@@ -1,24 +1,10 @@
 /**
  * Smaller scroll effects that each take only a few lines:
- * the dining picture turning from dusk to night, pictures that drift
- * slightly as they pass (parallax), and the roads on the map drawing in.
+ * pictures that drift slightly as they pass (parallax), and the roads on
+ * the map drawing in.
  */
 import { find, findAll } from '../lib/dom';
 import { gsap } from '../lib/motion';
-
-/** Dining: the night picture fades in over the dusk picture. */
-export function createDiningNightfall(): () => void {
-  const picture = find('[data-dining]');
-  const night = find('[data-dining-night]');
-  if (!picture || !night) return () => {};
-
-  gsap.to(night, {
-    opacity: 1,
-    ease: 'none',
-    scrollTrigger: { trigger: picture, start: 'top 65%', end: 'bottom 55%', scrub: true },
-  });
-  return () => gsap.set(night, { clearProps: 'all' });
-}
 
 /**
  * Parallax: a picture marked `data-parallax` moves a little slower than the

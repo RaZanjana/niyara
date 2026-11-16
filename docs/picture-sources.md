@@ -20,7 +20,7 @@ These fixed the look of the hotel. Later pictures were made with them attached.
 | A4  | Tank Pavilion, outside | `847db2db-18de-4954-b825-4e1ab6093743` |
 | A5  | Tank Pavilion, inside  | `aaacbb13-3dc1-4d76-a6e9-b48a4681e456` |
 | A6  | The pool               | `1d565162-5cad-43db-a443-4faf2a24eaa4` |
-| A7  | The Ambalama           | `9a902946-3826-4465-8328-3ee8eacfa4bf` |
+| A7  | The Ambalama           | `b4b551b8-f0cc-4474-bff8-f0e301b95a82` |
 
 ## Pictures on the site
 
@@ -37,9 +37,9 @@ These fixed the look of the hotel. Later pictures were made with them attached.
 | S12 | A walk along the reservoirs   | `4dd50d42-7d04-44e7-9a53-25a687d94505` |
 | S13 | The rice and curry table      | `2d2638f0-ad53-471c-81fc-05579566a50b` |
 | S14 | The old tree                  | `4609357d-3b68-4a1e-b616-81eac4456eec` |
-| S15 | Dining, at dusk               | `4860f272-16b2-4e6d-8768-2a802a10e3ec` |
-| S16 | Dining, at night              | `3081b9a5-7586-4bd2-8408-3398b0fa7ee7` |
-| S18 | Dinner at The Ambalama        | `dfc3da3c-a622-496a-b173-d47163c94bc7` |
+| S15 | Dining, at dusk               | `047a9443-9517-4f3a-b332-a263a94dabbd` |
+| S16 | Dining, at night              | `9f41324e-e397-4866-863b-3a884b4584f4` |
+| S18 | Dinner at The Ambalama        | `60b652e2-0ed8-43d2-9520-6c385a59328b` |
 | S19 | The water after dark          | `9adc99cb-dd39-4ab1-b2c4-c6a101450f22` |
 | S20 | The bank at first light       | `cbb751b9-c024-4425-95e1-ce74476555ea` |
 | S21 | The old city by bicycle       | `44597eb0-2ca5-495c-9f3d-cd33a7f93029` |
@@ -48,11 +48,22 @@ These fixed the look of the hotel. Later pictures were made with them attached.
 
 ## Films
 
-| Film                  | Made from       | Higgsfield job                         | Notes                                    |
-| --------------------- | --------------- | -------------------------------------- | ---------------------------------------- |
-| Dining, dusk to night | S15 to S16      | `7ead5a72-2dd8-4cbe-9fe1-ec6868788ac2` | Seedance 2.5, 4 seconds, 720p, no sound. |
-| Opening film (draft)  | S01, first only | `f6cc752f-3244-43fa-afb5-514d59083daf` | Seedance 2.5 draft, 6 seconds, no sound. |
+| Film                  | Made from       | Higgsfield job                         | Notes                                     |
+| --------------------- | --------------- | -------------------------------------- | ----------------------------------------- |
+| Opening film          | S01, first only | `c4b3bcf0-ba93-44c7-91d0-b4adbe7f823a` | Seedance 2.5, 6 seconds, 1080p, no sound. |
+| Dining, dusk to night | S15 to S16      | `6fed7eeb-f029-4571-a839-96c0f0bfe789` | Seedance 2.5, 4 seconds, 720p, no sound.  |
 
-Two earlier opening film drafts were rejected because they dissolved between
-the first and last frame instead of moving the camera: `d9a0efbb-04cc-422f-9081-9c8d8a5ad4d4`
-and `0837e964-1066-42e0-979c-7736705fdfe6`.
+The opening film was first made as a cheap draft (`f6cc752f-3244-43fa-afb5-514d59083daf`)
+and then finished from that draft, so the camera move is the same. Its first
+second is thick mist, so the site starts the film a little way in.
+
+## Replaced versions
+
+Kept here so nobody reuses them by mistake.
+
+- Two opening film drafts that dissolved between two pictures instead of moving
+  the camera: `d9a0efbb-04cc-422f-9081-9c8d8a5ad4d4` and `0837e964-1066-42e0-979c-7736705fdfe6`.
+- The first restaurant, which was too small and stood alone: the pictures
+  `4860f272-16b2-4e6d-8768-2a802a10e3ec` (dusk), `3081b9a5-7586-4bd2-8408-3398b0fa7ee7` (night)
+  and `dfc3da3c-a622-496a-b173-d47163c94bc7` (dinner), and the film
+  `7ead5a72-2dd8-4cbe-9fe1-ec6868788ac2`.

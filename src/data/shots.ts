@@ -67,7 +67,7 @@ export const shots = {
   },
   S15: {
     name: 'Dining, at dusk',
-    alt: 'The open-sided restaurant beside the old tree just after sunset, tables set and lanterns not yet lit.',
+    alt: 'The long open-sided restaurant beside the old tree just after sunset, with its bar and open kitchen at the back, tables set and lanterns not yet lit.',
     tone: '#d9a07a',
   },
   S16: {
@@ -77,7 +77,7 @@ export const shots = {
   },
   S18: {
     name: 'Dinner at The Ambalama',
-    alt: 'A family of four laughing over dinner by candlelight in the open dining pavilion, with lit lanterns overhead and the dark water beyond.',
+    alt: 'A family of four laughing over dinner by candlelight in the long dining hall, with lit lanterns overhead, the bar and open kitchen behind and the dark water beyond.',
     tone: '#6b4534',
   },
   S19: {

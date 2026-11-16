@@ -29,6 +29,9 @@ const sequences = JSON.parse(
 );
 
 for (const [name, sequence] of Object.entries(sequences)) {
+  // Only the opening film has a drawn stand-in. Other films simply stay off
+  // until their real frames are added.
+  if (!sequence.standIn) continue;
   for (const variant of ['desktop', 'mobile']) {
     await generate(`${name}/${variant}`, sequence[variant], sequence);
   }
