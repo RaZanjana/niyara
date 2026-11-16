@@ -15,9 +15,6 @@ npm run dev
 
 Then open http://localhost:4321.
 
-The first run takes a minute or two longer, because it draws the stand-in
-frames for the opening film (see "Pictures and film" below).
-
 ## Commands
 
 | Command                | What it does                                                   |
@@ -59,7 +56,7 @@ src/
     main.ts     Switches everything on. Start reading here.
   styles/       Design tokens (colors, type, spacing) and base styles.
   assets/images Photographs, named by shot ID.
-scripts/        Build helpers (the stand-in film frames).
+scripts/        Helpers: import pictures and films, draw stand-in frames.
 docs/           How the site works and how to add pictures.
 ```
 
@@ -77,13 +74,16 @@ docs/           How the site works and how to add pictures.
 | Let search engines list the site | `allowIndexing` in `src/data/site.ts`            |
 | Reorder or add a section         | `src/data/scenes.ts` and `src/pages/index.astro` |
 
-## Pictures and film
+## Pictures and films
 
-No real pictures are in the project yet. Each photograph shows as a flat block
-with its shot ID until its file is added, and the opening film plays drawn
-stand-in frames of the right number, size and weight.
+All the pictures and both films (the opening scene and the dining scene) were
+made in Higgsfield and are saved in the project:
 
-See [docs/assets.md](docs/assets.md) for how to add the real ones.
+- pictures in `src/assets/images/`, named by shot ID, and
+- film frames in `public/frames/`.
+
+[docs/assets.md](docs/assets.md) explains how to replace or add one, and
+[docs/picture-sources.md](docs/picture-sources.md) lists where each one came from.
 
 ## Before the site goes public
 

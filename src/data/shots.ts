@@ -48,7 +48,6 @@ export const shots = {
     name: 'The pool',
     alt: 'A long pool lined in dark green stone, looking out over rice fields, with a tiled pavilion of sun loungers beside it.',
     tone: '#d8d3c8',
-    focus: '64% 50%',
   },
   S12: {
     name: 'A walk along the reservoirs',

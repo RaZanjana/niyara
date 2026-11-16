@@ -10,7 +10,8 @@
  */
 import { find } from '../lib/dom';
 import { startFilm } from '../lib/film';
-import { gsap } from '../lib/motion';
+import type { FrameSequence } from '../lib/frame-sequence';
+import { gsap, ScrollTrigger } from '../lib/motion';
 
 export function createDining({ wide }: { wide: boolean }): () => void {
   const picture = find('[data-dining]');
@@ -18,9 +19,22 @@ export function createDining({ wide }: { wide: boolean }): () => void {
   const canvas = find<HTMLCanvasElement>('[data-dining-canvas]');
   if (!picture || !night) return () => {};
 
-  // The canvas is only on the page when the film's frames exist.
-  const film = canvas ? startFilm('dining', canvas, { wide }) : undefined;
+  let film: FrameSequence | undefined;
   const playhead = { progress: 0 };
+
+  // The film is far down the page, so its frames are only downloaded when the
+  // visitor gets within two screens of it. The canvas is only on the page
+  // when the film's frames exist.
+  const loader = ScrollTrigger.create({
+    trigger: picture,
+    start: 'top 300%',
+    once: true,
+    onEnter: () => {
+      if (!canvas) return;
+      film = startFilm('dining', canvas, { wide });
+      film?.show(playhead.progress);
+    },
+  });
 
   gsap
     .timeline({
@@ -31,6 +45,7 @@ export function createDining({ wide }: { wide: boolean }): () => void {
     .to(playhead, { progress: 1, onUpdate: () => film?.show(playhead.progress) }, 0);
 
   return () => {
+    loader.kill();
     film?.destroy();
     gsap.set(night, { clearProps: 'all' });
   };

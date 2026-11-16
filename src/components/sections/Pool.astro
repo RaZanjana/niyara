@@ -109,9 +109,11 @@ const scene = getScene('pool');
       height: clamp(45rem, 62vw, 56rem);
     }
 
+    /* The text sits low on the left, over the near water, so the pool's far
+       edge and the rice fields beyond it stay in view. */
     .pool__panel {
       position: absolute;
-      bottom: clamp(9.5rem, 16vw, 13.75rem);
+      bottom: clamp(4.5rem, 7vw, 6.5rem);
       left: clamp(1rem, 5vw, 5.5rem);
       max-width: 26.25rem;
       padding: 2rem;

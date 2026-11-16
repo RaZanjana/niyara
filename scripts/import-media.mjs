@@ -29,6 +29,7 @@ if (!downloads) {
 /** The longest side a picture is saved at. Larger than any screen shows it. */
 const PICTURE_MAX_SIDE = 2400;
 const PICTURE_QUALITY = 84;
+/** Used when a film in media-sources.json does not set its own `quality`. */
 const FRAME_QUALITY = 72;
 
 const sources = JSON.parse(await readFile(path.join(root, 'scripts/media-sources.json'), 'utf8'));
@@ -99,7 +100,7 @@ for (const [name, film] of Object.entries(sources.films)) {
         '-c:v',
         'libwebp',
         '-quality',
-        String(FRAME_QUALITY),
+        String(film.quality ?? FRAME_QUALITY),
         path.join(folder, `%0${sequences[name].digits}d.${sequences[name].extension}`),
       ],
       { stdio: 'inherit' },

@@ -16,7 +16,7 @@
       "height": 1280,
       "budgetKb": 2000
     },
-    "standIn": true
+    "standIn": false
   },
   "dining": {
     "extension": "webp",
@@ -24,17 +24,17 @@
     "standIn": false,
     "desktop": {
       "path": "/frames/dining/desktop",
-      "count": 48,
+      "count": 40,
       "width": 1280,
       "height": 720,
-      "budgetKb": 2500
+      "budgetKb": 3000
     },
     "mobile": {
       "path": "/frames/dining/mobile",
-      "count": 32,
+      "count": 28,
       "width": 540,
       "height": 720,
-      "budgetKb": 900
+      "budgetKb": 1000
     }
   }
 }

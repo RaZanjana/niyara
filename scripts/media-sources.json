@@ -24,12 +24,14 @@
     "hero": {
       "job": "c4b3bcf0-ba93-44c7-91d0-b4adbe7f823a",
       "startSeconds": 1.4,
-      "mobileFocusX": 0.62
+      "mobileFocusX": 0.74,
+      "quality": 68
     },
     "dining": {
       "job": "6fed7eeb-f029-4571-a839-96c0f0bfe789",
       "startSeconds": 0,
-      "mobileFocusX": 0.6
+      "mobileFocusX": 0.6,
+      "quality": 56
     }
   }
 }

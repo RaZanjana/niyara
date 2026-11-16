@@ -64,11 +64,9 @@ These numbers live in `src/data/frame-sequences.json`. For each film,
 The dining film is optional. If its frames are not in the project, the dining
 section cross-fades between its dusk and night photographs instead.
 
-### Stand-in frames for the opening film
+### Stand-in frames
 
-Until the real opening film is imported, `npm run placeholders` draws a simple
-sketch for every frame. It runs by itself before `npm run dev` and
-`npm run build`. It leaves a small marker file in each folder it fills, and it
-never touches a folder that holds frames without that marker. So real frames
-are safe. Once the real film is in, delete the `public/frames` line at the end
-of `.gitignore` so the frames are saved with the project.
+If the opening film's frames are ever deleted, `npm run placeholders` draws a
+simple sketch for every frame so the page still works. It runs by itself
+before `npm run dev` and `npm run build`, and does nothing while the real
+frames are in place.

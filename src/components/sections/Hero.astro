@@ -107,11 +107,30 @@ const narrowScreens = '(max-width: 56.24em)';
   }
 
   .hero__content {
+    --bottom-space: clamp(3.5rem, 8svh, 6rem);
     position: absolute;
-    inset: auto var(--gutter) clamp(3.5rem, 8svh, 6rem);
+    inset: auto var(--gutter) var(--bottom-space);
     display: grid;
     justify-items: start;
     gap: 1.6rem;
+    isolation: isolate;
+  }
+
+  /* A veil of mist behind the words, in the color of the dawn sky. It keeps
+     the text readable wherever the film is dark, and lifts with the text as
+     the visitor starts to scroll. */
+  .hero__content::before {
+    position: absolute;
+    inset: -7rem calc(var(--gutter) * -1) calc(var(--bottom-space) * -1);
+    z-index: -1;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in srgb, var(--surface) 82%, transparent) 38%,
+      color-mix(in srgb, var(--surface) 88%, transparent)
+    );
+    content: '';
+    pointer-events: none;
   }
 
   .hero__title {
@@ -137,6 +156,11 @@ const narrowScreens = '(max-width: 56.24em)';
   @media (min-width: 56.25em) {
     :global(html[data-motion='full']) .hero {
       --hold: 110svh;
+    }
+
+    /* On a wide screen the words sit over pale water, so a lighter veil is enough. */
+    .hero__content::before {
+      opacity: 0.55;
     }
 
     .hero__actions {
