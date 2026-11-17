@@ -226,8 +226,8 @@ const narrowScreens = '(max-width: 56.24em)';
 
   :global(html[data-motion='full']) .location {
     --hold: 230svh;
-    --overlap: 100svh;
-    height: calc(100svh + var(--overlap) + var(--hold) + var(--overlap));
+    --overlap: var(--screen);
+    height: calc(var(--screen) + var(--overlap) + var(--hold) + var(--overlap));
     margin-top: calc(var(--overlap) * -2);
     color: var(--color-on-photo);
     /* A menu link to this section should land where the heading has
@@ -241,7 +241,7 @@ const narrowScreens = '(max-width: 56.24em)';
   :global(html[data-motion='full']) .location__stage {
     position: sticky;
     top: 0;
-    height: 100svh;
+    height: var(--screen);
     min-height: 35rem;
     overflow: hidden;
     background: var(--color-shadow);
@@ -275,7 +275,7 @@ const narrowScreens = '(max-width: 56.24em)';
   /* The three texts share one place, low on the left, and take turns. */
   :global(html[data-motion='full']) .location__chapters {
     position: absolute;
-    inset: auto var(--gutter) clamp(4.5rem, 11svh, 7.5rem);
+    inset: auto var(--gutter) calc(clamp(4.5rem, 11svh, 7.5rem) + var(--bars));
     gap: 0;
     padding: 0;
   }
@@ -288,7 +288,7 @@ const narrowScreens = '(max-width: 56.24em)';
 
   :global(html[data-motion='full']) .location__timeline {
     position: absolute;
-    inset: auto var(--gutter) clamp(2.25rem, 5.5svh, 3.75rem);
+    inset: auto var(--gutter) calc(clamp(2.25rem, 5.5svh, 3.75rem) + var(--bars));
     display: block;
     height: 1px;
     background: rgb(251 248 243 / 22%);

@@ -43,6 +43,15 @@
   --label-column: 12.5rem;
   --header-height: 4rem;
 
+  /* The height of the screen. Phone browsers shrink their address bar as the
+     page scrolls, so the visible screen grows. A scene that holds still must
+     fill it at its largest (`lvh`), or the scene behind shows through at the
+     bottom. `--bars` is how much of that the browser's bars may cover; text
+     near the bottom of a held scene adds it, so it is never hidden under them.
+     Browsers without these units use `vh`, which behaves like `lvh`. */
+  --screen: 100vh;
+  --bars: 0px;
+
   /* Shape */
   --radius-pill: 999px;
   --control-height: 3.25rem;
@@ -59,6 +68,13 @@
   --layer-header: 10;
   --layer-menu: 20;
   --layer-popover: 30;
+}
+
+@supports (height: 100lvh) {
+  :root {
+    --screen: 100lvh;
+    --bars: calc(100lvh - 100svh);
+  }
 }
 
 @media (min-width: 56.25em) {

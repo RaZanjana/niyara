@@ -52,21 +52,21 @@ const scene = getScene('arrival');
     --hold: 0svh;
     --overlap: 0svh;
     z-index: 1;
-    height: calc(100svh + var(--overlap) + var(--hold));
+    height: calc(var(--screen) + var(--overlap) + var(--hold));
     min-height: 35rem;
     margin-top: calc(var(--overlap) * -2);
   }
 
   :global(html[data-motion='full']) .arrival {
     --hold: 110svh;
-    --overlap: 100svh;
-    scroll-margin-top: -100svh;
+    --overlap: var(--screen);
+    scroll-margin-top: calc(var(--screen) * -1);
   }
 
   .arrival__stage {
     position: sticky;
     top: 0;
-    height: 100svh;
+    height: var(--screen);
     min-height: 35rem;
   }
 
@@ -98,7 +98,7 @@ const scene = getScene('arrival');
 
   .arrival__panel {
     position: absolute;
-    inset: auto var(--gutter) clamp(5rem, 14svh, 8.5rem);
+    inset: auto var(--gutter) calc(clamp(5rem, 14svh, 8.5rem) + var(--bars));
     display: grid;
     gap: 1.1rem;
     max-width: 26rem;

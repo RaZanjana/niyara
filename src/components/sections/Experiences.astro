@@ -298,15 +298,17 @@ const twoDigits = (value: number) => String(value).padStart(2, '0');
   /* `--travel` is how far the cards have to go, set by the script. The
      section is made that much taller, and that scrolling moves them. */
   :global(html[data-motion='full']) .experiences__run {
-    height: calc(100svh + var(--travel, 0px));
+    height: calc(var(--screen) + var(--travel, 0px));
   }
 
   :global(html[data-motion='full']) .experiences__pin {
     position: sticky;
     top: 0;
     align-content: center;
-    height: 100svh;
+    height: var(--screen);
+    /* Centred in the part of the screen that is always visible. */
     padding-top: var(--header-height);
+    padding-bottom: var(--bars);
     overflow: hidden;
   }
 

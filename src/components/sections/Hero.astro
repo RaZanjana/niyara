@@ -98,14 +98,14 @@ const narrowScreens = '(max-width: 56.24em)';
     --hold: 0svh;
     --overlap: 0svh;
     z-index: 3;
-    height: calc(100svh + var(--hold) + var(--overlap));
+    height: calc(var(--screen) + var(--hold) + var(--overlap));
     min-height: 35rem;
     color: var(--color-on-photo);
   }
 
   :global(html[data-motion='full']) .hero {
     --hold: 90svh;
-    --overlap: 100svh;
+    --overlap: var(--screen);
     /* The section is taller than what it shows. Let clicks through the
        empty part to the scene underneath. */
     pointer-events: none;
@@ -114,7 +114,7 @@ const narrowScreens = '(max-width: 56.24em)';
   .hero__stage {
     position: sticky;
     top: 0;
-    height: 100svh;
+    height: var(--screen);
     min-height: 35rem;
     overflow: hidden;
     background: var(--color-shadow);
@@ -165,7 +165,7 @@ const narrowScreens = '(max-width: 56.24em)';
 
   .hero__content {
     position: absolute;
-    inset: auto var(--gutter) clamp(4.5rem, 11svh, 7.5rem);
+    inset: auto var(--gutter) calc(clamp(4.5rem, 11svh, 7.5rem) + var(--bars));
     display: grid;
     justify-items: start;
     gap: 1.5rem;
@@ -232,7 +232,7 @@ const narrowScreens = '(max-width: 56.24em)';
   .hero__cue {
     position: absolute;
     right: var(--gutter);
-    bottom: clamp(2.5rem, 6svh, 4rem);
+    bottom: calc(clamp(2.5rem, 6svh, 4rem) + var(--bars));
     display: none;
     align-items: center;
     gap: 0.9rem;

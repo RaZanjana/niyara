@@ -168,7 +168,7 @@ const hasFilm = existsSync(publicFile(frameUrl(desktop.path, 0, digits, extensio
 
   @media (min-width: 56.25em) {
     .dining {
-      height: calc(100svh + var(--hold));
+      height: calc(var(--screen) + var(--hold));
       min-height: 42rem;
     }
 
@@ -179,7 +179,7 @@ const hasFilm = existsSync(publicFile(frameUrl(desktop.path, 0, digits, extensio
     .dining__stage {
       position: sticky;
       top: 0;
-      height: 100svh;
+      height: var(--screen);
       min-height: 42rem;
       background: none;
     }
