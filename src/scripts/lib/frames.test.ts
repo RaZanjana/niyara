@@ -6,6 +6,12 @@ describe('frameUrl', () => {
     expect(frameUrl('/frames/hero/desktop', 0, 4, 'webp')).toBe('/frames/hero/desktop/0001.webp');
     expect(frameUrl('/frames/hero/desktop', 149, 4, 'webp')).toBe('/frames/hero/desktop/0150.webp');
   });
+
+  it("adds the film's fingerprint, so a replaced film is fetched afresh", () => {
+    expect(frameUrl('/frames/hero/desktop', 0, 4, 'webp', 'a1b2c3')).toBe(
+      '/frames/hero/desktop/0001.webp?v=a1b2c3',
+    );
+  });
 });
 
 describe('frameIndexAt', () => {

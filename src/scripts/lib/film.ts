@@ -7,14 +7,9 @@
 import sequences from '@/data/frame-sequences.json';
 import { FrameSequence } from './frame-sequence';
 import { frameUrl } from './frames';
+import { prefersLessData } from './loading-order';
 
 export type FilmName = keyof typeof sequences;
-
-/** True when the visitor has asked their browser to save mobile data. */
-function prefersLessData(): boolean {
-  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-  return connection?.saveData === true;
-}
 
 /**
  * Starts downloading a film and returns its player.
@@ -31,13 +26,13 @@ export function startFilm(
 ): FrameSequence | undefined {
   if (prefersLessData()) return undefined;
 
-  const { digits, extension } = sequences[name];
+  const { digits, extension, version } = sequences[name];
   const frames = wide ? sequences[name].desktop : sequences[name].mobile;
   const film = new FrameSequence(canvas, {
     count: frames.count,
     width: frames.width,
     height: frames.height,
-    urlFor: (index) => frameUrl(frames.path, index, digits, extension),
+    urlFor: (index) => frameUrl(frames.path, index, digits, extension, version),
     lead,
     onProgress,
   });

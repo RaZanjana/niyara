@@ -14,7 +14,7 @@ import { find, findAll } from '../lib/dom';
 import { startFilm } from '../lib/film';
 import type { FrameSequence } from '../lib/frame-sequence';
 import { gsap, ScrollTrigger, SplitText } from '../lib/motion';
-import { HERO_LOADED } from './hero';
+import { HERO_LOADED, LOCATION_LOADED } from '../lib/loading-order';
 
 export function createLocation({ wide }: { wide: boolean }): () => void {
   const scene = find('#location');
@@ -40,6 +40,10 @@ export function createLocation({ wide }: { wide: boolean }): () => void {
     if (film) return;
     film = startFilm('location', canvas, { wide });
     film?.show(playhead.progress);
+    // The next things to load wait for this film (see lib/loading-order.ts).
+    void (film?.done ?? Promise.resolve()).then(() =>
+      window.dispatchEvent(new Event(LOCATION_LOADED)),
+    );
   };
   const loader = ScrollTrigger.create({
     trigger: '#top',

@@ -31,8 +31,12 @@ interface FrameSequenceOptions {
   onProgress?: (fraction: number) => void;
 }
 
-/** How many frames to download at the same time. */
-const PARALLEL_DOWNLOADS = 6;
+/**
+ * How many frames to download at the same time. Frames are small, and the
+ * site is served over HTTP/2, so more at once mostly saves waiting on the
+ * connection's round trips.
+ */
+const PARALLEL_DOWNLOADS = 8;
 
 /** Drawing sharper than this costs speed and memory for no visible gain. */
 const MAX_PIXEL_RATIO = 1.5;

@@ -181,6 +181,30 @@ They change with arrows on the picture, small pictures underneath, a swipe or
 the arrow keys (`scripts/ui/rooms.ts`). Choosing another villa starts again
 at its first picture.
 
+## Loading order and caching
+
+The page loads what it needs in order, so each part is ready before the
+visitor reaches it and nothing competes with what is needed first
+(`src/scripts/lib/loading-order.ts`):
+
+1. the opening film, while the title card is up;
+2. the film of the reservoirs, once the opening film is in or the visitor
+   starts to scroll;
+3. then, a few at a time, every picture further down the page in page order,
+   and the restaurant's film.
+
+Pictures are marked to load lazily, so without step 3 each would only be
+fetched as the visitor came near it, and appear in front of them. Step 3
+fetches exactly the size and format the browser would have chosen. Visitors
+who asked their browser to save data skip it.
+
+Everything is cached by the browser for a year: the pictures and scripts
+under `/_astro/` because their names change with their content, and the film
+frames because each film's addresses carry a fingerprint of its frames
+(`0001.webp?v=…`, see `scripts/stamp-frames.mjs` and `vercel.json`). The
+fingerprint is worked out again before every build, so a replaced film is
+always fetched afresh.
+
 ## The gallery
 
 The photographs change by themselves every few seconds, with a soft sweep

@@ -73,7 +73,10 @@ const first = gallerySlides[0];
               data-caption={slide.caption}
             >
               <div class="gallery__picture" data-gallery-picture>
-                <Media shot={slide.shot} sizes="(min-width: 85em) 85rem, 100vw" />
+                <Media
+                  shot={slide.shot}
+                  sizes="(min-width: 85em) 72rem, (min-width: 56.25em) 72vw, 110vw"
+                />
               </div>
               <figcaption class="gallery__slide-caption">
                 <strong>{slide.title}.</strong> {slide.caption}

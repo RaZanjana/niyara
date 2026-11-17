@@ -37,7 +37,8 @@ export function shotFile(id: string): string | undefined {
 
 /** The file behind a public address such as `/frames/hero/desktop/0001.webp`. */
 export function publicFile(url: string): string {
-  return path.join(root, 'public', url);
+  // Drop anything after `?`, such as a film's fingerprint.
+  return path.join(root, 'public', url.split('?')[0] ?? url);
 }
 
 /** A tiny blurred copy of a picture, as a data URI. Empty if the file is missing. */

@@ -75,6 +75,11 @@ cut fewer frames (`count`). A slow camera move needs fewer frames than a fast on
 The dining film is optional. If its frames are not in the project, the dining
 section cross-fades between its dusk and night photographs instead.
 
+Each film also has a `version` in `frame-sequences.json`: a fingerprint of
+its frames, added to their addresses so browsers can cache them for a year.
+`npm run stamp` works it out, and it runs by itself before `npm run dev` and
+`npm run build`. There is nothing to do by hand.
+
 ### Stand-in frames
 
 If the opening film's frames are ever deleted, `npm run placeholders` draws a

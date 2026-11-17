@@ -13,9 +13,21 @@ interface Rect extends Size {
   y: number;
 }
 
-/** The address of one frame. Frames are numbered from 1, for example `0001.webp`. */
-export function frameUrl(basePath: string, index: number, digits: number, extension: string) {
-  return `${basePath}/${String(index + 1).padStart(digits, '0')}.${extension}`;
+/**
+ * The address of one frame. Frames are numbered from 1, for example `0001.webp`.
+ * `version` is the film's fingerprint (see scripts/stamp-frames.mjs). It is
+ * added to the address so that browsers can keep the frame for a long time,
+ * and still fetch it afresh when the film is replaced.
+ */
+export function frameUrl(
+  basePath: string,
+  index: number,
+  digits: number,
+  extension: string,
+  version?: string,
+) {
+  const file = `${basePath}/${String(index + 1).padStart(digits, '0')}.${extension}`;
+  return version ? `${file}?v=${version}` : file;
 }
 
 /** Which frame (counting from 0) to show for a scroll progress from 0 to 1. */

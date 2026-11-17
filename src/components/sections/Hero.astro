@@ -27,9 +27,9 @@ import { sceneHref } from '@/data/scenes';
 import { site } from '@/data/site';
 import { frameUrl } from '@/scripts/lib/frames';
 
-const { desktop, mobile, digits, extension } = sequences.hero;
-const desktopPoster = frameUrl(desktop.path, 0, digits, extension);
-const mobilePoster = frameUrl(mobile.path, 0, digits, extension);
+const { desktop, mobile, digits, extension, version } = sequences.hero;
+const desktopPoster = frameUrl(desktop.path, 0, digits, extension, version);
+const mobilePoster = frameUrl(mobile.path, 0, digits, extension, version);
 const narrowScreens = '(max-width: 56.24em)';
 ---
 

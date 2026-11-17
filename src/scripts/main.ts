@@ -9,6 +9,7 @@
  * Each `init...` function looks for its own elements and quietly does
  * nothing if they are not on the page.
  */
+import { initLoadingOrder } from './lib/loading-order';
 import { initSmoothScroll } from './lib/smooth-scroll';
 import { initScrollScenes } from './scenes';
 import { initCardHover, initPoolRipples, initScroller } from './ui/small-interactions';
@@ -41,3 +42,4 @@ initBackToTop(scroll);
 
 // Last, because it measures the page, and the pieces above can change its height.
 initScrollScenes();
+initLoadingOrder();

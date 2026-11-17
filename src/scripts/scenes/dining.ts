@@ -14,6 +14,7 @@
 import { find, findAll } from '../lib/dom';
 import { startFilm } from '../lib/film';
 import type { FrameSequence } from '../lib/frame-sequence';
+import { LOCATION_LOADED } from '../lib/loading-order';
 import { gsap, ScrollTrigger } from '../lib/motion';
 
 export function createDining({ wide }: { wide: boolean }): () => void {
@@ -29,19 +30,22 @@ export function createDining({ wide }: { wide: boolean }): () => void {
   let film: FrameSequence | undefined;
   const playhead = { progress: 0 };
 
-  // The film is far down the page, so its frames are only downloaded when the
-  // visitor gets within two screens of it. The canvas is only on the page
-  // when the film's frames exist.
+  // The film is far down the page, so its frames are downloaded once the
+  // films above it are in (see lib/loading-order.ts), or as soon as the
+  // visitor gets within three screens of it, whichever comes first. The
+  // canvas is only on the page when the film's frames exist.
+  const start = () => {
+    if (film || !canvas) return;
+    film = startFilm('dining', canvas, { wide });
+    film?.show(playhead.progress);
+  };
   const loader = ScrollTrigger.create({
     trigger: picture,
     start: 'top 300%',
     once: true,
-    onEnter: () => {
-      if (!canvas) return;
-      film = startFilm('dining', canvas, { wide });
-      film?.show(playhead.progress);
-    },
+    onEnter: start,
   });
+  window.addEventListener(LOCATION_LOADED, start, { once: true });
 
   // On a wide screen night falls while the picture holds still. On a phone
   // it falls as the picture passes up the screen.
@@ -74,6 +78,7 @@ export function createDining({ wide }: { wide: boolean }): () => void {
 
   return () => {
     loader.kill();
+    window.removeEventListener(LOCATION_LOADED, start);
     film?.destroy();
     gsap.set([...night, ...lines, layers, shade].filter(Boolean), { clearProps: 'all' });
   };

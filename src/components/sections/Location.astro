@@ -21,7 +21,7 @@ import { getScene } from '@/data/scenes';
 import { frameUrl } from '@/scripts/lib/frames';
 
 const scene = getScene('location');
-const { desktop, mobile, digits, extension } = sequences.location;
+const { desktop, mobile, digits, extension, version } = sequences.location;
 const narrowScreens = '(max-width: 56.24em)';
 ---
 
@@ -31,13 +31,13 @@ const narrowScreens = '(max-width: 56.24em)';
       <picture>
         <source
           media={narrowScreens}
-          srcset={frameUrl(mobile.path, 0, digits, extension)}
+          srcset={frameUrl(mobile.path, 0, digits, extension, version)}
           width={mobile.width}
           height={mobile.height}
         />
         <img
           class="location__poster"
-          src={frameUrl(desktop.path, 0, digits, extension)}
+          src={frameUrl(desktop.path, 0, digits, extension, version)}
           width={desktop.width}
           height={desktop.height}
           alt="A chain of misty reservoirs seen from the air at sunrise. Niyara stands on a grassy bank between two of them, and a great white stupa rises on the horizon."

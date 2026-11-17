@@ -28,6 +28,7 @@ Then open http://localhost:4321.
 | `npm run check`        | Checks the types in every file (TypeScript).                   |
 | `npm test`             | Runs the unit tests (Vitest).                                  |
 | `npm run placeholders` | Draws the stand-in film frames. Add `-- --force` to redraw.    |
+| `npm run stamp`        | Fingerprints the film frames for caching. Runs by itself.      |
 
 GitHub runs `npm run verify` on every push and pull request.
 

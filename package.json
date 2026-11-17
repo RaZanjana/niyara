@@ -8,10 +8,11 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "dev": "npm run placeholders && astro dev",
-    "build": "npm run placeholders && astro build",
+    "dev": "npm run placeholders && npm run stamp && astro dev",
+    "build": "npm run placeholders && npm run stamp && astro build",
     "preview": "astro preview",
     "placeholders": "node scripts/generate-placeholder-frames.mjs",
+    "stamp": "node scripts/stamp-frames.mjs",
     "check": "astro check",
     "lint": "eslint .",
     "format": "prettier --write .",

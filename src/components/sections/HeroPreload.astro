@@ -6,20 +6,20 @@
 import sequences from '@/data/frame-sequences.json';
 import { frameUrl } from '@/scripts/lib/frames';
 
-const { desktop, mobile, digits, extension } = sequences.hero;
+const { desktop, mobile, digits, extension, version } = sequences.hero;
 ---
 
 <link
   rel="preload"
   as="image"
-  href={frameUrl(mobile.path, 0, digits, extension)}
+  href={frameUrl(mobile.path, 0, digits, extension, version)}
   media="(max-width: 56.24em)"
   fetchpriority="high"
 />
 <link
   rel="preload"
   as="image"
-  href={frameUrl(desktop.path, 0, digits, extension)}
+  href={frameUrl(desktop.path, 0, digits, extension, version)}
   media="(min-width: 56.25em)"
   fetchpriority="high"
 />

@@ -16,7 +16,8 @@
       "height": 960,
       "budgetKb": 1600
     },
-    "standIn": false
+    "standIn": false,
+    "version": "28fe1aa55b"
   },
   "location": {
     "extension": "webp",
@@ -35,7 +36,8 @@
       "width": 540,
       "height": 960,
       "budgetKb": 2000
-    }
+    },
+    "version": "4417708ce3"
   },
   "dining": {
     "extension": "webp",
@@ -54,6 +56,7 @@
       "width": 540,
       "height": 720,
       "budgetKb": 1000
-    }
+    },
+    "version": "eb958148ff"
   }
 }

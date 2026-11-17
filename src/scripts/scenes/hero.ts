@@ -20,6 +20,7 @@
 import { find, findAll } from '../lib/dom';
 import { startFilm } from '../lib/film';
 import { gsap, SplitText } from '../lib/motion';
+import { HERO_LOADED } from '../lib/loading-order';
 import { loaderDone, trackLoading } from '../ui/loader';
 
 /** How far into the film the camera glides by itself when the page opens. */
@@ -30,9 +31,6 @@ const LEAD_FRAMES = 16;
 
 /** The longest the opening waits for the typeface and the first frames, in milliseconds. */
 const MAX_WAIT = 1800;
-
-/** Sent on the window once the opening film's frames have all arrived. */
-export const HERO_LOADED = 'niyara:hero-loaded';
 
 /** The opening plays once, even if the scenes are set up again after a resize. */
 let openingPlayed = false;

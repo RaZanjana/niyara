@@ -21,8 +21,8 @@ import sequences from '@/data/frame-sequences.json';
 import { site } from '@/data/site';
 import { frameUrl } from '@/scripts/lib/frames';
 
-const { desktop, digits, extension } = sequences.hero;
-const firstFrame = frameUrl(desktop.path, 0, digits, extension);
+const { desktop, digits, extension, version } = sequences.hero;
+const firstFrame = frameUrl(desktop.path, 0, digits, extension, version);
 const letters = site.name.toUpperCase().split('');
 ---
 
