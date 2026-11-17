@@ -1,0 +1,118 @@
+---
+/**
+ * BackToTop: a round button in the lower right corner that glides the page
+ * back to the top (scripts/ui/back-to-top.ts).
+ *
+ * It appears once the visitor has scrolled past the opening. A fine gold ring
+ * around it fills as they move down the page. Like the header, it takes the
+ * colors of the section behind it (`data-tinted`, see scenes/atmosphere.ts).
+ * Without scripts it is a plain link to the top, always at the bottom of
+ * the footer's reach.
+ */
+---
+
+<a class="to-top" href="#top" aria-label="Back to the top" data-to-top data-tinted>
+  <svg class="to-top__ring" aria-hidden="true" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="23" pathLength="1"></circle>
+    <circle cx="24" cy="24" r="23" pathLength="1" data-to-top-progress></circle>
+  </svg>
+  <svg
+    class="to-top__arrow"
+    aria-hidden="true"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+  >
+    <path d="M8 14V2.5M3 7L8 2L13 7" stroke="currentColor" stroke-width="1.25"></path>
+  </svg>
+</a>
+
+<style>
+  .to-top {
+    display: none;
+  }
+
+  :global(html.js) .to-top {
+    position: fixed;
+    right: max(1rem, calc(var(--gutter) * 0.6));
+    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    z-index: var(--layer-header);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--page-bg, var(--surface)) 72%, transparent);
+    box-shadow: 0 0.75rem 1.75rem -0.75rem rgb(0 0 0 / 45%);
+    color: var(--page-ink, var(--ink));
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.75rem) scale(0.9);
+    transition:
+      opacity 0.5s ease,
+      transform 0.7s var(--ease-out-expo),
+      visibility 0s 0.7s,
+      background-color 0.5s linear,
+      color 0.5s linear;
+  }
+
+  :global(html.js) .to-top[data-shown] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  /* Out of the way while a calendar or the guests panel of a booking form is
+     open, since those can reach the corner it sits in. */
+  :global(html.js:has(.bform [data-open])) .to-top {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .to-top__ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    fill: none;
+    stroke-width: 1;
+  }
+
+  .to-top__ring circle:first-child {
+    stroke: color-mix(in srgb, currentColor 28%, transparent);
+  }
+
+  /* The share of the page scrolled, drawn as a gold arc from the top. */
+  .to-top__ring circle:last-child {
+    stroke: var(--color-lamp);
+    stroke-dasharray: 1;
+    stroke-dashoffset: var(--scrolled-left, 1);
+    stroke-linecap: round;
+  }
+
+  .to-top__arrow {
+    transition: transform var(--duration-calm) var(--ease-water);
+  }
+
+  /* On hover the button fills with the color of the words, and the arrow rises. */
+  .to-top:hover {
+    background: var(--page-ink, var(--ink));
+    color: var(--page-bg, var(--surface));
+  }
+
+  .to-top:hover .to-top__arrow {
+    transform: translateY(-3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .to-top,
+    .to-top__arrow {
+      transition: none;
+    }
+  }
+</style>

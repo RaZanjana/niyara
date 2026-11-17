@@ -2,13 +2,14 @@ export const bookingIntro = {
   heading: 'When would you like to come?',
 };
 
-export const guestOptions = [
-  '2 adults',
-  '1 adult',
-  '2 adults, 1 child',
-  '2 adults, 2 children',
-  '4 adults',
-];
+/** The two guest counters of the booking form. */
+export const guestCounts = [
+  { name: 'adults', label: 'Adults', hint: 'Aged 18 and over', min: 1, max: 20, start: 2 },
+  { name: 'children', label: 'Children', hint: 'Aged 10 to 17', min: 0, max: 10, start: 0 },
+] as const;
+
+export const freeChildrenNote =
+  'Children under 10 stay free. Bring them along; there is no need to count them here.';
 
 /** Reasons to book on this site and not through a booking website. */
 export const directBenefits = [

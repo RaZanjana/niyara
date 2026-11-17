@@ -57,10 +57,10 @@ export function createLocation({ wide }: { wide: boolean }): () => void {
   const screens = (scene.offsetHeight - stage.offsetHeight) / stage.offsetHeight;
   const hold = Math.max(1, screens - 2);
   const at = (part: number) => 1 + part * hold;
-  const enter = { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: 0.1 * hold };
-  const leave = { autoAlpha: 0, y: -36, filter: 'blur(6px)', duration: 0.07 * hold };
+  const enter = { autoAlpha: 1, y: 0, duration: 0.1 * hold };
+  const leave = { autoAlpha: 0, y: -36, duration: 0.07 * hold };
 
-  gsap.set(chapters, { autoAlpha: 0, y: 44, filter: 'blur(8px)' });
+  gsap.set(chapters, { autoAlpha: 0, y: 44 });
 
   const flight = gsap
     .timeline({
@@ -100,6 +100,14 @@ export function createLocation({ wide }: { wide: boolean }): () => void {
       rows,
       { opacity: 0, x: -22, duration: 0.07 * hold, stagger: 0.035 * hold, ease: 'power2.out' },
       at(0.76),
+    )
+    // The words go before the picture does, so they never show over the
+    // words of the scene underneath while the two pictures cross.
+    .to(travel, { ...leave, ease: 'power1.in' }, screens - 1.3)
+    .to(
+      [timeline?.parentElement].filter(Boolean),
+      { autoAlpha: 0, duration: 0.07 * hold },
+      screens - 1.3,
     )
     // The dissolve out. The gateway is already in place underneath.
     .to(stage, { autoAlpha: 0, duration: 0.8, ease: 'power1.inOut' }, screens - 0.92)

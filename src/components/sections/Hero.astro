@@ -151,15 +151,18 @@ const narrowScreens = '(max-width: 56.24em)';
 
   /* The shade: the film's darkest color, only where the words are, and a
      little along the top for the header. The rest of the picture is clear. */
+  /* On a phone the words run the full width, over the sunlit tree, so the
+     shade rises from the whole of the bottom edge. */
   .hero__shade {
     background:
-      radial-gradient(
-        120% 85% at 0% 100%,
-        rgb(15 18 15 / 74%) 0%,
-        rgb(15 18 15 / 46%) 34%,
-        rgb(15 18 15 / 0%) 66%
+      linear-gradient(
+        to top,
+        rgb(15 18 15 / 88%) 0%,
+        rgb(15 18 15 / 74%) 26%,
+        rgb(15 18 15 / 46%) 46%,
+        rgb(15 18 15 / 0%) 70%
       ),
-      linear-gradient(to bottom, rgb(15 18 15 / 34%), rgb(15 18 15 / 0%) 18%);
+      linear-gradient(to bottom, rgb(15 18 15 / 40%), rgb(15 18 15 / 0%) 16%);
     pointer-events: none;
   }
 
@@ -169,6 +172,14 @@ const narrowScreens = '(max-width: 56.24em)';
     display: grid;
     justify-items: start;
     gap: 1.5rem;
+  }
+
+  /* A soft dark halo under every line of words, so the edges of the letters
+     never meet a bright leaf. */
+  .hero__content {
+    text-shadow:
+      0 1px 2px rgb(15 18 15 / 45%),
+      0 0 1.75rem rgb(15 18 15 / 55%);
   }
 
   .hero__place {
@@ -198,14 +209,14 @@ const narrowScreens = '(max-width: 56.24em)';
     font-size: clamp(5.5rem, 13.5vw, 13.5rem);
     line-height: 0.86;
     letter-spacing: -0.02em;
-    text-shadow: 0 0.04em 0.6em rgb(15 18 15 / 30%);
+    text-shadow: 0 0.04em 0.6em rgb(15 18 15 / 45%);
   }
 
   .hero__lead {
     max-width: 31rem;
     font-size: var(--text-lead);
     line-height: 1.6;
-    text-shadow: 0 0 1.5rem rgb(15 18 15 / 50%);
+    font-weight: 450;
   }
 
   .hero__actions {
@@ -221,6 +232,7 @@ const narrowScreens = '(max-width: 56.24em)';
     border-color: var(--color-on-photo);
     background: var(--color-on-photo);
     color: var(--color-charcoal);
+    text-shadow: none;
   }
 
   .hero__button:hover {
@@ -304,6 +316,18 @@ const narrowScreens = '(max-width: 56.24em)';
       flex-direction: row;
       align-items: center;
       gap: 2.25rem;
+    }
+
+    /* On a wide screen the words sit in the lower left, over the water. */
+    .hero__shade {
+      background:
+        radial-gradient(
+          120% 90% at 0% 100%,
+          rgb(15 18 15 / 82%) 0%,
+          rgb(15 18 15 / 56%) 36%,
+          rgb(15 18 15 / 0%) 70%
+        ),
+        linear-gradient(to bottom, rgb(15 18 15 / 34%), rgb(15 18 15 / 0%) 18%);
     }
   }
 

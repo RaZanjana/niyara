@@ -13,6 +13,7 @@ import '@/styles/tokens.css';
 import '@/styles/base.css';
 
 import displayFontUrl from '@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url';
+import BackToTop from '@/components/layout/BackToTop.astro';
 import BookingModal from '@/components/layout/BookingModal.astro';
 import PageLoader from '@/components/layout/PageLoader.astro';
 import SiteFooter from '@/components/layout/SiteFooter.astro';
@@ -70,6 +71,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
     <SiteFooter />
+    <BackToTop />
 
     <script>
       import '@/scripts/main';

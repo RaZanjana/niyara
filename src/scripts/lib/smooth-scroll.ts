@@ -12,6 +12,8 @@ export interface ScrollLock {
   /** Stops the page from scrolling, for example while the menu is open. */
   lock(): void;
   unlock(): void;
+  /** Glides the page to a position, or jumps there for reduced motion. */
+  scrollTo(top: number): void;
 }
 
 const LOCKED_CLASS = 'is-scroll-locked';
@@ -43,6 +45,14 @@ export function initSmoothScroll(): ScrollLock {
       if (holds > 0) return;
       lenis?.start();
       root.classList.remove(LOCKED_CLASS);
+    },
+    scrollTo(top) {
+      if (lenis) {
+        // Slow at both ends, like the camera moves on the page.
+        lenis.scrollTo(top, { duration: 2.4, easing: (t) => 1 - Math.pow(1 - t, 4) });
+        return;
+      }
+      window.scrollTo({ top, behavior: matches(queries.fullMotion) ? 'smooth' : 'auto' });
     },
   };
 }

@@ -17,7 +17,7 @@ import { bookHref, primaryNav } from '@/data/navigation';
 import { sceneHref } from '@/data/scenes';
 ---
 
-<header class="header" data-header>
+<header class="header" data-header data-tinted>
   <a class="header__home" href={sceneHref('top')} aria-label="Niyara, back to the top">
     <Wordmark />
   </a>
@@ -87,6 +87,21 @@ import { sceneHref } from '@/data/scenes';
     -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 38%, transparent 100%);
     mask-image: linear-gradient(to bottom, #000 0, #000 38%, transparent 100%);
     pointer-events: none;
+  }
+
+  /* On touch screens the glass is a deeper tint without the blur: blurring a
+     moving film behind the bar on every frame is too much for a phone. */
+  @media (hover: none), (max-width: 56.24em) {
+    .header::before {
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--tint) 78%, transparent),
+        color-mix(in srgb, var(--tint) 44%, transparent) 55%,
+        color-mix(in srgb, var(--tint) 0%, transparent)
+      );
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
   }
 
   .header__home {

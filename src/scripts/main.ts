@@ -12,14 +12,15 @@
 import { initSmoothScroll } from './lib/smooth-scroll';
 import { initScrollScenes } from './scenes';
 import { initCardHover, initPoolRipples, initScroller } from './ui/small-interactions';
+import { initBackToTop } from './ui/back-to-top';
 import { initBookingModal } from './ui/booking-modal';
 import { initCalendars } from './ui/calendar';
 import { initBookingForms } from './ui/enquiry';
 import { initGallery } from './ui/gallery';
+import { initGuests } from './ui/guests';
 import { initMenu } from './ui/menu';
 import { initLoader } from './ui/loader';
 import { initRooms } from './ui/rooms';
-import { initSelects } from './ui/select';
 
 const scroll = initSmoothScroll();
 
@@ -33,9 +34,10 @@ initScroller();
 initCardHover();
 initPoolRipples();
 initCalendars();
-initSelects();
+initGuests();
 initBookingForms();
 initBookingModal(scroll);
+initBackToTop(scroll);
 
 // Last, because it measures the page, and the pieces above can change its height.
 initScrollScenes();

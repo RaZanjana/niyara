@@ -16,8 +16,14 @@ import sharp from 'sharp';
 const root = process.cwd();
 const imagesFolder = path.join(root, 'src/assets/images');
 
-/** The longest side of an ambient copy, in pixels. Blur hides the rest. */
-const AMBIENT_SIZE = 40;
+/**
+ * The longest side of an ambient copy, in pixels, and how much it is
+ * blurred here, once, while the site is built. Blurred enough, a small copy
+ * stretched across the screen looks like a soft glow by itself, so phones do
+ * not have to blur it again on every frame (see `.ambient` in base.css).
+ */
+const AMBIENT_SIZE = 96;
+const AMBIENT_BLUR = 4.5;
 
 const cache = new Map<string, Promise<string>>();
 
@@ -39,8 +45,9 @@ export function ambientUri(file: string | undefined): Promise<string> {
   if (!uri) {
     uri = sharp(file)
       .resize(AMBIENT_SIZE, AMBIENT_SIZE, { fit: 'inside' })
-      .blur(1.1)
-      .webp({ quality: 62 })
+      .blur(AMBIENT_BLUR)
+      .modulate({ saturation: 1.15 })
+      .webp({ quality: 58 })
       .toBuffer()
       .then((buffer) => `data:image/webp;base64,${buffer.toString('base64')}`);
     cache.set(file, uri);

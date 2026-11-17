@@ -60,11 +60,10 @@ export function createDining({ wide }: { wide: boolean }): () => void {
     if (shade) nightfall.fromTo(shade, { opacity: 0 }, { opacity: 1, duration: 0.34 }, 0.34);
     nightfall.fromTo(
       lines,
-      { autoAlpha: 0, y: 30, filter: 'blur(6px)' },
+      { autoAlpha: 0, y: 30 },
       {
         autoAlpha: 1,
         y: 0,
-        filter: 'blur(0px)',
         duration: 0.22,
         stagger: 0.045,
         ease: 'power2.out',

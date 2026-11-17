@@ -11,10 +11,10 @@
     },
     "mobile": {
       "path": "/frames/hero/mobile",
-      "count": 36,
-      "width": 612,
-      "height": 1088,
-      "budgetKb": 2000
+      "count": 32,
+      "width": 540,
+      "height": 960,
+      "budgetKb": 1600
     },
     "standIn": false
   },
@@ -31,10 +31,10 @@
     },
     "mobile": {
       "path": "/frames/location/mobile",
-      "count": 72,
-      "width": 720,
-      "height": 1280,
-      "budgetKb": 2800
+      "count": 44,
+      "width": 540,
+      "height": 960,
+      "budgetKb": 2000
     }
   },
   "dining": {

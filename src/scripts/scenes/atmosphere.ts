@@ -6,9 +6,17 @@
  * the page background between the two colors, so the sections never meet at
  * a hard line. It also tells the header whether to use dark or light text.
  *
- * It writes two CSS variables on <html>:
+ * It paints the color straight onto <body>, and gives the elements that sit
+ * over the page and take its colors (marked `data-tinted`: the header, the
+ * back to top button) two CSS variables:
  *   --page-bg   the current background color
  *   --page-ink  a text color that is readable on it
+ *
+ * Why not one variable on <html>, read by everything? Because changing a
+ * variable there makes the browser work out the styles of every element on
+ * the page again, on every frame of scrolling, which phones feel. And it
+ * only writes when the color has actually changed, which is most of the time
+ * not at all.
  */
 import {
   colorAlong,
@@ -39,6 +47,8 @@ export function createAtmosphere({ blend }: AtmosphereOptions): () => void {
     parseHex(getComputedStyle(scene).getPropertyValue('--surface')),
   );
   const headerHeight = find('.header')?.offsetHeight ?? 0;
+  const tinted = findAll('[data-tinted]');
+  let painted = '';
 
   // One trigger per boundary between two sections. Its progress runs from
   // 0 (still the earlier section's color) to 1 (fully the later section's).
@@ -60,8 +70,15 @@ export function createAtmosphere({ blend }: AtmosphereOptions): () => void {
     // to the third. This stays correct however far the page jumps.
     const position = boundaries.reduce((sum, boundary) => sum + boundary.progress, 0);
     const color = colorAlong(colors, blend ? position : Math.round(position));
-    root.style.setProperty('--page-bg', toCss(color));
-    root.style.setProperty('--page-ink', prefersDarkInk(color) ? DARK_INK : LIGHT_INK);
+    const css = toCss(color);
+    if (css === painted) return;
+    painted = css;
+    const ink = prefersDarkInk(color) ? DARK_INK : LIGHT_INK;
+    document.body.style.backgroundColor = css;
+    tinted.forEach((element) => {
+      element.style.setProperty('--page-bg', css);
+      element.style.setProperty('--page-ink', ink);
+    });
   }
 
   root.dataset.atmosphere = blend ? 'blend' : 'step';
@@ -70,8 +87,11 @@ export function createAtmosphere({ blend }: AtmosphereOptions): () => void {
   return () => {
     boundaries.forEach((boundary) => boundary.kill());
     delete root.dataset.atmosphere;
-    root.style.removeProperty('--page-bg');
-    root.style.removeProperty('--page-ink');
+    document.body.style.removeProperty('background-color');
+    tinted.forEach((element) => {
+      element.style.removeProperty('--page-bg');
+      element.style.removeProperty('--page-ink');
+    });
   };
 }
 

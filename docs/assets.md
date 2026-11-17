@@ -49,13 +49,15 @@ means "keep the area 40% from the left, halfway down").
 A film is shown as a row of still frames, so that scrolling can play it
 forwards and backwards. There are three:
 
-| Film       | Where              | Desktop frames     | Phone frames      |
-| ---------- | ------------------ | ------------------ | ----------------- |
-| Opening    | Top of the page    | 72, at 1440 x 810  | 36, at 612 x 1088 |
-| Reservoirs | "Where we are"     | 132, at 1600 x 900 | 72, at 720 x 1280 |
-| Dining     | The dining section | 40, at 1280 x 720  | 28, at 540 x 720  |
+| Film       | Where              | Desktop frames     | Phone frames     |
+| ---------- | ------------------ | ------------------ | ---------------- |
+| Opening    | Top of the page    | 72, at 1440 x 810  | 32, at 540 x 960 |
+| Reservoirs | "Where we are"     | 132, at 1600 x 900 | 44, at 540 x 960 |
+| Dining     | The dining section | 40, at 1280 x 720  | 28, at 540 x 720 |
 
-These numbers live in `src/data/frame-sequences.json`. For each film,
+These numbers live in `src/data/frame-sequences.json`. Phone frames are kept
+small and few: a phone holds every frame of a film in memory as a full
+picture, and too many make it stutter. For each film,
 `scripts/media-sources.json` also says:
 
 - `startSeconds`: where in the film to begin.

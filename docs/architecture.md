@@ -42,9 +42,14 @@ the test fails.
 
 `src/scripts/scenes/atmosphere.ts` reads each scene's background color, then
 watches every boundary between two scenes. While a boundary crosses the
-screen, it blends the two colors and writes the result to two CSS variables on
-the page: `--page-bg` and `--page-ink` (a text color that is readable on it).
-The body and the header use those variables.
+screen, it blends the two colors, paints the result onto `<body>`, and gives
+the elements that take the page's colors (marked `data-tinted`: the header and
+the back to top button) two CSS variables, `--page-bg` and `--page-ink` (a
+text color that is readable on it).
+
+It writes only when the color has changed, and never to `<html>`: a variable
+changed there makes the browser work out the style of every element on the
+page again, on every frame of scrolling, which phones feel.
 
 The position is worked out from where the page is right now, not from what
 happened before. So jumping with a menu link, or scrolling back up, always
@@ -71,6 +76,22 @@ and the page is made of the picture's own colors.
 
 The blurred copies are made while the site is built (`src/lib/ambient.ts`) and
 written straight into the page. Each is a few hundred bytes.
+
+## Phones
+
+What makes a phone stutter is avoided on purpose:
+
+- Held scenes are sized to `--screen` (`100lvh`, the screen with the
+  browser's address bar shrunk), so the next scene never shows through at the
+  bottom when the bar shrinks. Text near their bottom edge adds `--bars`, the
+  height the bars can cover, so it is never hidden under them.
+- The header's frosted glass is a plain tint on touch screens: blurring a
+  moving film behind it on every frame is too much for a phone.
+- The color glows behind pictures are blurred once, while the site is built.
+  Only a desktop blurs them a little more, live.
+- Nothing animates a blur filter.
+- Phone film frames are 540 px wide, and fewer, so the three films hold about
+  200 MB of pictures in memory, not 400.
 
 ## Scenes that hold still while you scroll
 
@@ -167,15 +188,24 @@ the keyboard is inside the gallery, while it is off screen, and when its
 pause button is pressed. It does not start by itself for visitors who prefer
 reduced motion.
 
+## Back to top
+
+Once the visitor is past the opening, a round button in the lower right
+corner glides the page back to the top (`layout/BackToTop.astro`,
+`scripts/ui/back-to-top.ts`). A gold ring around it fills as the page is
+scrolled. It steps out of the way while a booking calendar or guests panel is
+open.
+
 ## Booking
 
 `components/ui/BookingForm.astro` is the form with the two dates and the
 guests. It is used twice: in the booking section, and in the booking window.
 
 - The date fields open a calendar drawn by the site (`scripts/ui/calendar.ts`),
-  and the guests field opens a list drawn by the site (`scripts/ui/select.ts`),
-  so both match the page in every browser. The browser's own date inputs and
-  select stay in the form, hidden, and carry the values.
+  and the guests field opens two counters, for adults and for children aged 10
+  to 17, with a note that younger children stay free (`scripts/ui/guests.ts`).
+  Both match the page in every browser. The browser's own date and number
+  inputs stay in the form, hidden, and carry the values.
 - "Book a stay" opens the booking window (`layout/BookingModal.astro`,
   `scripts/ui/booking-modal.ts`). The button itself grows into the window, and
   shrinks back into the button when it closes.

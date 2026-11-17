@@ -47,10 +47,17 @@ function setUpForm(form: HTMLFormElement): void {
       return;
     }
 
-    const guests = String(new FormData(form).get('guests') ?? '');
+    const details = new FormData(form);
+    const adults = String(details.get('adults') ?? '2');
+    const children = String(details.get('children') ?? '0');
     const engineUrl = form.dataset.engineUrl;
     if (engineUrl) {
-      const query = new URLSearchParams({ arrive: arrive.value, leave: leave.value, guests });
+      const query = new URLSearchParams({
+        arrive: arrive.value,
+        leave: leave.value,
+        adults,
+        children,
+      });
       window.location.assign(`${engineUrl}?${query}`);
       return;
     }
@@ -65,7 +72,9 @@ function setUpForm(form: HTMLFormElement): void {
         '',
         `Arriving: ${toReadable(arrive.value)}`,
         `Leaving: ${toReadable(leave.value)}`,
-        `Guests: ${guests}`,
+        `Adults: ${adults}`,
+        `Children aged 10 to 17: ${children}`,
+        'Children under 10 (they stay free): ',
         '',
         'Thank you.',
       ].join('\n'),

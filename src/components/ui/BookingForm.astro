@@ -4,11 +4,13 @@
  * Used twice: in the booking section, and in the booking window that opens
  * from "Book a stay" (layout/BookingModal.astro).
  *
- * The date fields and the guests list are drawn by the site, not by the
+ * The date fields and the guests field are drawn by the site, not by the
  * browser, so they look the same everywhere and match the rest of the page:
  * - Choosing a date opens a calendar. The arrival is picked first, then the
  *   departure, and the nights between them are marked (scripts/ui/calendar.ts).
- * - The guests list opens under its field (scripts/ui/select.ts).
+ * - The guests field opens two counters under it, for adults and for
+ *   children aged 10 to 17, and notes that younger children stay free
+ *   (scripts/ui/guests.ts).
  * Both work with a keyboard and a screen reader.
  *
  * Without scripts, the browser's own date fields and list are shown instead.
@@ -17,7 +19,7 @@
  * submitting the form opens an email enquiry with the chosen dates
  * (scripts/ui/enquiry.ts).
  */
-import { guestOptions } from '@/data/booking';
+import { freeChildrenNote, guestCounts } from '@/data/booking';
 import { site } from '@/data/site';
 
 interface Props {
@@ -129,28 +131,43 @@ const dates = [
     </div>
   </div>
 
-  <div class="bform__field bform__field--guests" data-select>
-    <label class="bform__label" id={`${id}-guests-label`} for={`${id}-guests`}>
+  <div class="bform__field bform__field--guests" data-guests>
+    <span class="bform__label" id={`${id}-guests-label`}>
       Guests
-    </label>
-    <select class="bform__native" id={`${id}-guests`} name="guests" data-select-native>
-      {guestOptions.map((option) => (
-        <option>{option}</option>
+    </span>
+
+    <!-- Without scripts: two plain number fields. -->
+    <div class="bform__native bform__native-guests">
+      {guestCounts.map((count) => (
+        <label>
+          <span>{count.label}</span>
+          <input
+            type="number"
+            name={count.name}
+            min={count.min}
+            max={count.max}
+            value={count.start}
+            data-guests-input={count.name}
+          />
+        </label>
       ))}
-    </select>
+    </div>
+
     <button
       type="button"
       class="bform__control"
-      role="combobox"
-      aria-haspopup="listbox"
+      aria-haspopup="dialog"
       aria-expanded="false"
-      aria-controls={`${id}-guests-list`}
+      aria-controls={`${id}-guests-panel`}
       aria-labelledby={`${id}-guests-label ${id}-guests-value`}
-      data-select-button
+      data-guests-button
     >
-      <span class="bform__value">
-        <span class="bform__value-main" id={`${id}-guests-value`} data-select-value>
-          {guestOptions[0]}
+      <span class="bform__value" id={`${id}-guests-value`}>
+        <span class="bform__value-main" data-guests-summary>
+          2 adults
+        </span>
+        <span class="bform__value-note" data-guests-note>
+          No children aged 10 to 17
         </span>
       </span>
       <svg
@@ -164,27 +181,55 @@ const dates = [
         <path d="M4 7L9 12L14 7" stroke="currentColor" />
       </svg>
     </button>
-    <ul
-      class="listbox"
-      id={`${id}-guests-list`}
-      role="listbox"
-      aria-labelledby={`${id}-guests-label`}
-      data-select-list
+
+    <div
+      class="guests"
+      id={`${id}-guests-panel`}
+      role="dialog"
+      aria-label="Guests"
+      data-guests-panel
+      inert
     >
-      {guestOptions.map((option, index) => (
-        <li
-          id={`${id}-guests-option-${index}`}
-          role="option"
-          aria-selected={index === 0 ? 'true' : 'false'}
-          data-select-option={option}
-        >
-          <span>{option}</span>
-          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" />
-          </svg>
-        </li>
+      {guestCounts.map((count) => (
+        <div class="guests__row" data-guests-row={count.name}>
+          <div class="guests__text">
+            <span class="guests__name">{count.label}</span>
+            <span class="guests__hint">{count.hint}</span>
+          </div>
+          <div class="guests__counter">
+            <button
+              type="button"
+              class="guests__step"
+              data-guests-step="-1"
+              aria-label={`Fewer ${count.label.toLowerCase()}`}
+            >
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 7H12" stroke="currentColor" />
+              </svg>
+            </button>
+            <output class="guests__value" aria-live="polite" data-guests-value>
+              {count.start}
+            </output>
+            <button
+              type="button"
+              class="guests__step"
+              data-guests-step="1"
+              aria-label={`More ${count.label.toLowerCase()}`}
+            >
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 7H12M7 2V12" stroke="currentColor" />
+              </svg>
+            </button>
+          </div>
+        </div>
       ))}
-    </ul>
+      <p class="guests__note">{freeChildrenNote}</p>
+      <div class="guests__foot">
+        <button type="button" class="calendar__text-button" data-guests-done>
+          Done
+        </button>
+      </div>
+    </div>
   </div>
 
   <button class="button bform__submit" type="submit">
@@ -244,7 +289,7 @@ const dates = [
   }
 
   .bform__control,
-  .bform .listbox,
+  .bform .guests,
   .bform .calendar {
     display: none;
   }
@@ -345,19 +390,46 @@ const dates = [
     display: none;
   }
 
-  /* ---- The guests list ---- */
+  /* ---- The guests: two counters in a panel under the field ---- */
 
-  html.js .bform .listbox {
+  .bform__native-guests {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .bform__native-guests label {
+    display: grid;
+    gap: 0.35rem;
+    font-size: var(--text-fine);
+  }
+
+  .bform__native-guests input {
+    height: var(--control-height);
+    padding: 0 0.75rem;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 1rem;
+  }
+
+  html.js .bform .guests {
     position: absolute;
-    inset: calc(100% + 0.5rem) 0 auto;
+    top: calc(100% + 0.5rem);
+    right: 0;
     z-index: var(--layer-popover);
-    display: block;
-    margin: 0;
-    padding: 0.5rem;
+    display: grid;
+    gap: 0.25rem;
+    width: max(100%, 20rem);
+    max-width: calc(100vw - 2 * var(--gutter));
+    padding: 0.75rem 1.25rem 0.75rem;
     border: 1px solid var(--line);
     background: var(--surface-raised);
     box-shadow: 0 1.75rem 3.5rem -1.25rem rgb(0 0 0 / 65%);
-    list-style: none;
     visibility: hidden;
     opacity: 0;
     transform: translateY(-0.5rem);
@@ -367,50 +439,91 @@ const dates = [
       visibility 0s 0.5s;
   }
 
-  html.js .bform .listbox[data-open] {
+  html.js .bform .guests[data-open] {
     visibility: visible;
     opacity: 1;
     transform: none;
     transition-delay: 0s;
   }
 
-  .listbox li {
+  .guests__row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    min-height: 3rem;
-    padding: 0 0.875rem;
-    color: var(--ink-muted);
+    padding-block: 0.875rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .guests__text {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .guests__name {
     font-family: var(--font-display);
-    font-size: 1.3125rem;
+    font-size: 1.375rem;
     line-height: 1.2;
-    cursor: pointer;
+  }
+
+  .guests__hint {
+    color: var(--ink-muted);
+    font-size: var(--text-fine);
+  }
+
+  .guests__counter {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .guests__step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: none;
+    color: var(--ink);
     transition:
       background-color var(--duration-quick) ease,
+      border-color var(--duration-quick) ease,
       color var(--duration-quick) ease,
-      padding-left var(--duration-calm) var(--ease-water);
+      opacity var(--duration-quick) ease;
   }
 
-  .listbox li svg {
-    flex: none;
+  .guests__step:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--color-charcoal);
+  }
+
+  .guests__step:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .guests__value {
+    min-width: 2.25rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  .guests__note {
+    padding-top: 0.75rem;
     color: var(--accent);
-    opacity: 0;
+    font-size: var(--text-small);
   }
 
-  .listbox li[aria-selected='true'] {
-    color: var(--ink);
-  }
-
-  .listbox li[aria-selected='true'] svg {
-    opacity: 1;
-  }
-
-  /* The option the keyboard or the pointer is on. */
-  .listbox li[data-current] {
-    padding-left: 1.25rem;
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
-    color: var(--ink);
+  .guests__foot {
+    display: flex;
+    justify-content: flex-end;
   }
 
   /* ---- The calendar ---- */
@@ -713,9 +826,9 @@ const dates = [
 
   @media (prefers-reduced-motion: reduce) {
     html.js .bform .calendar,
-    html.js .bform .listbox,
+    html.js .bform .guests,
     .bform__field::after,
-    .listbox li {
+    .guests__step {
       transition: none;
     }
   }
