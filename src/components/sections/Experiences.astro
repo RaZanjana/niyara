@@ -119,7 +119,7 @@ const twoDigits = (value: number) => String(value).padStart(2, '0');
   .experiences__track {
     /* A card is as wide as the screen allows, and never so tall that the
        row does not fit on one screen. */
-    --card: min(75vw, 22.5rem, calc((100svh - 20rem) / 1.25));
+    --card: min(75vw, 22.5rem, calc((var(--small-screen) - 20rem) / 1.25));
     display: flex;
     gap: clamp(1rem, 2.6vw, 2.5rem);
     margin: 0;
@@ -354,7 +354,7 @@ const twoDigits = (value: number) => String(value).padStart(2, '0');
 
   @media (min-width: 56.25em) {
     .experiences__track {
-      --card: min(26rem, calc((100svh - 19rem) / 1.25));
+      --card: min(26rem, calc((var(--small-screen) - 19rem) / 1.25));
     }
 
     .experiences__planner {

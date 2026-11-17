@@ -49,8 +49,8 @@ const scene = getScene('arrival');
 <style>
   .arrival {
     /* See Location.astro for how `--hold` and `--overlap` work. */
-    --hold: 0svh;
-    --overlap: 0svh;
+    --hold: 0px;
+    --overlap: 0px;
     z-index: 1;
     height: calc(var(--screen) + var(--overlap) + var(--hold));
     min-height: 35rem;
@@ -58,7 +58,7 @@ const scene = getScene('arrival');
   }
 
   :global(html[data-motion='full']) .arrival {
-    --hold: 110svh;
+    --hold: calc(var(--sv) * 110);
     --overlap: var(--screen);
     scroll-margin-top: calc(var(--screen) * -1);
   }
@@ -98,7 +98,7 @@ const scene = getScene('arrival');
 
   .arrival__panel {
     position: absolute;
-    inset: auto var(--gutter) calc(clamp(5rem, 14svh, 8.5rem) + var(--bars));
+    inset: auto var(--gutter) calc(clamp(5rem, calc(var(--sv) * 14), 8.5rem) + var(--bars));
     display: grid;
     gap: 1.1rem;
     max-width: 26rem;
@@ -129,7 +129,7 @@ const scene = getScene('arrival');
 
   @media (min-width: 56.25em) {
     :global(html[data-motion='full']) .arrival {
-      --hold: 140svh;
+      --hold: calc(var(--sv) * 140);
     }
 
     .arrival__panel {

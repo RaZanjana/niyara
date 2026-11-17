@@ -95,8 +95,8 @@ const narrowScreens = '(max-width: 56.24em)';
        is the further distance over which it dissolves into the next scene,
        which slides up underneath it by the same amount (see Location).
        Both are zero until the scroll scripts switch them on. */
-    --hold: 0svh;
-    --overlap: 0svh;
+    --hold: 0px;
+    --overlap: 0px;
     z-index: 3;
     height: calc(var(--screen) + var(--hold) + var(--overlap));
     min-height: 35rem;
@@ -104,7 +104,7 @@ const narrowScreens = '(max-width: 56.24em)';
   }
 
   :global(html[data-motion='full']) .hero {
-    --hold: 90svh;
+    --hold: calc(var(--sv) * 90);
     --overlap: var(--screen);
     /* The section is taller than what it shows. Let clicks through the
        empty part to the scene underneath. */
@@ -168,7 +168,7 @@ const narrowScreens = '(max-width: 56.24em)';
 
   .hero__content {
     position: absolute;
-    inset: auto var(--gutter) calc(clamp(4.5rem, 11svh, 7.5rem) + var(--bars));
+    inset: auto var(--gutter) calc(clamp(4.5rem, calc(var(--sv) * 11), 7.5rem) + var(--bars));
     display: grid;
     justify-items: start;
     gap: 1.5rem;
@@ -244,7 +244,7 @@ const narrowScreens = '(max-width: 56.24em)';
   .hero__cue {
     position: absolute;
     right: var(--gutter);
-    bottom: calc(clamp(2.5rem, 6svh, 4rem) + var(--bars));
+    bottom: calc(clamp(2.5rem, calc(var(--sv) * 6), 4rem) + var(--bars));
     display: none;
     align-items: center;
     gap: 0.9rem;
@@ -309,7 +309,7 @@ const narrowScreens = '(max-width: 56.24em)';
 
   @media (min-width: 56.25em) {
     :global(html[data-motion='full']) .hero {
-      --hold: 120svh;
+      --hold: calc(var(--sv) * 120);
     }
 
     .hero__actions {

@@ -79,7 +79,7 @@ const hasFilm = existsSync(publicFile(frameUrl(desktop.path, 0, digits, extensio
   .dining {
     /* Extra scroll distance during which night falls. Zero until the scroll
        scripts switch it on, and only on a wide screen. */
-    --hold: 0svh;
+    --hold: 0px;
   }
 
   /* On a phone the words stand below the picture. They get the night color
@@ -88,7 +88,11 @@ const hasFilm = existsSync(publicFile(frameUrl(desktop.path, 0, digits, extensio
   .dining__stage {
     position: relative;
     display: grid;
-    background: linear-gradient(to bottom, transparent 42svh, var(--surface) 66svh);
+    background: linear-gradient(
+      to bottom,
+      transparent calc(var(--sv) * 42),
+      var(--surface) calc(var(--sv) * 66)
+    );
   }
 
   .dining__glow,
@@ -104,14 +108,14 @@ const hasFilm = existsSync(publicFile(frameUrl(desktop.path, 0, digits, extensio
     --ambient-reach: 1.1;
     /* On a phone the glow belongs to the picture, not to the text below it. */
     bottom: auto;
-    height: 62svh;
+    height: calc(var(--sv) * 62);
     min-height: 24rem;
   }
 
   .dining__frame {
     --feather: 15%;
     position: relative;
-    height: 62svh;
+    height: calc(var(--sv) * 62);
     min-height: 24rem;
     overflow: hidden;
   }
@@ -172,7 +176,7 @@ const hasFilm = existsSync(publicFile(frameUrl(desktop.path, 0, digits, extensio
     }
 
     :global(html[data-motion='full']) .dining {
-      --hold: 115svh;
+      --hold: calc(var(--sv) * 115);
     }
 
     .dining__stage {

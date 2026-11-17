@@ -45,14 +45,25 @@
   --label-column: 12.5rem;
   --header-height: 4rem;
 
-  /* The height of the screen. Phone browsers shrink their address bar as the
-     page scrolls, so the visible screen grows. A scene that holds still must
-     fill it at its largest (`lvh`), or the scene behind shows through at the
-     bottom. `--bars` is how much of that the browser's bars may cover; text
-     near the bottom of a held scene adds it, so it is never hidden under them.
-     Browsers without these units use `vh`, which behaves like `lvh`. */
-  --screen: 100vh;
-  --bars: 0px;
+  /* The height of the screen, for the scenes that hold still while you
+     scroll and for the scroll distances they take.
+
+     `--lv` and `--sv` are one hundredth of the screen at its largest and at
+     its smallest: phone browsers shrink their address bar as the page scrolls,
+     so the visible screen grows. A held scene must fill it at its largest, or
+     the scene behind shows through at the bottom; `--bars` is how much of it
+     the browser's bars may cover, which text near the bottom of a held scene
+     adds, so it is never hidden under them.
+
+     The script measures both once, in pixels, when the page opens, and again
+     only if the phone is turned (scripts/lib/screen.ts). Left to themselves,
+     some phone browsers change these units while the address bar moves, which
+     changes the height of the whole page under the scroll animations. */
+  --lv: 1vh;
+  --sv: 1vh;
+  --screen: calc(var(--lv) * 100);
+  --small-screen: calc(var(--sv) * 100);
+  --bars: calc((var(--lv) - var(--sv)) * 100);
 
   /* Shape */
   --radius-pill: 999px;
@@ -74,8 +85,8 @@
 
 @supports (height: 100lvh) {
   :root {
-    --screen: 100lvh;
-    --bars: calc(100lvh - 100svh);
+    --lv: 1lvh;
+    --sv: 1svh;
   }
 }
 

@@ -83,10 +83,19 @@ a glow never ends in a line.
 
 What makes a phone stutter is avoided on purpose:
 
-- Held scenes are sized to `--screen` (`100lvh`, the screen with the
-  browser's address bar shrunk), so the next scene never shows through at the
-  bottom when the bar shrinks. Text near their bottom edge adds `--bars`, the
-  height the bars can cover, so it is never hidden under them.
+- Held scenes, and the scroll distances they take, are measured in screens:
+  `--screen` (the screen at its largest) and `--sv` (one hundredth of it at
+  its smallest). `scripts/lib/screen.ts` measures both once, in pixels, when
+  the page opens, and again only when the phone is turned. Some phone
+  browsers change their screen units while the address bar moves; the whole
+  page would then change height under the scroll animations, and they would
+  start in the wrong places, further down the page each time. On a phone the
+  largest screen is at least the screen's own height, so the scene behind
+  never shows through at the bottom. Text near the bottom of a held scene
+  adds `--bars`, the height the bars can cover, so it is never hidden under
+  them.
+- Should the page change height for any other reason, the scroll animations
+  are worked out again once it has settled.
 - The header's frosted glass is a plain tint on touch screens: blurring a
   moving film behind it on every frame is too much for a phone.
 - The color glows behind pictures are blurred once, while the site is built,

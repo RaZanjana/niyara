@@ -92,8 +92,8 @@ const narrowScreens = '(max-width: 56.24em)';
        is one screen, the distance over which one scene dissolves into the
        next. To be in place underneath the scene before it by then, this
        scene starts two screens up: one to arrive, one for the dissolve. */
-    --hold: 0svh;
-    --overlap: 0svh;
+    --hold: 0px;
+    --overlap: 0px;
     z-index: 2;
   }
 
@@ -103,7 +103,7 @@ const narrowScreens = '(max-width: 56.24em)';
 
   .location__film {
     position: relative;
-    height: min(72svh, 42rem);
+    height: min(calc(var(--sv) * 72), 42rem);
     overflow: hidden;
   }
 
@@ -225,14 +225,14 @@ const narrowScreens = '(max-width: 56.24em)';
   /* ---- With full motion: one screen that holds still while the film plays ---- */
 
   :global(html[data-motion='full']) .location {
-    --hold: 230svh;
+    --hold: calc(var(--sv) * 230);
     --overlap: var(--screen);
     height: calc(var(--screen) + var(--overlap) + var(--hold) + var(--overlap));
     margin-top: calc(var(--overlap) * -2);
     color: var(--color-on-photo);
     /* A menu link to this section should land where the heading has
        appeared, not on the dissolve that leads into it. */
-    scroll-margin-top: -122svh;
+    scroll-margin-top: calc(var(--sv) * -122);
     /* The section is taller than what it shows. Let clicks through the empty
        part to the scene underneath. */
     pointer-events: none;
@@ -275,7 +275,7 @@ const narrowScreens = '(max-width: 56.24em)';
   /* The three texts share one place, low on the left, and take turns. */
   :global(html[data-motion='full']) .location__chapters {
     position: absolute;
-    inset: auto var(--gutter) calc(clamp(4.5rem, 11svh, 7.5rem) + var(--bars));
+    inset: auto var(--gutter) calc(clamp(4.5rem, calc(var(--sv) * 11), 7.5rem) + var(--bars));
     gap: 0;
     padding: 0;
   }
@@ -288,7 +288,7 @@ const narrowScreens = '(max-width: 56.24em)';
 
   :global(html[data-motion='full']) .location__timeline {
     position: absolute;
-    inset: auto var(--gutter) calc(clamp(2.25rem, 5.5svh, 3.75rem) + var(--bars));
+    inset: auto var(--gutter) calc(clamp(2.25rem, calc(var(--sv) * 5.5), 3.75rem) + var(--bars));
     display: block;
     height: 1px;
     background: rgb(251 248 243 / 22%);
@@ -304,7 +304,7 @@ const narrowScreens = '(max-width: 56.24em)';
 
   @media (min-width: 56.25em) {
     :global(html[data-motion='full']) .location {
-      --hold: 300svh;
+      --hold: calc(var(--sv) * 300);
     }
   }
 </style>

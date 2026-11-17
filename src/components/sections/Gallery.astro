@@ -518,7 +518,7 @@ const first = gallerySlides[0];
     }
 
     :global(html.js) .gallery__stage {
-      height: min(70svh, 40rem);
+      height: min(calc(var(--sv) * 70), 40rem);
       aspect-ratio: auto;
     }
 
