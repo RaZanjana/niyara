@@ -1,6 +1,6 @@
 {
   "pictures": {
-    "S01": "4bea45a2-29dc-4b47-8a28-fd5559c33c0e",
+    "S01": "4d627777-19e2-4d55-9d03-8c4fd23223c8",
     "S02": "9f743642-5cac-437f-a9c6-216525c14136",
     "S03": "0799da08-57cd-4e85-a9a4-fb52a8bb608a",
     "S04": "0e36fda8-3f62-4c4e-8e97-d4f55317c026",
@@ -18,14 +18,25 @@
     "S20": "cbb751b9-c024-4425-95e1-ce74476555ea",
     "S21": "44597eb0-2ca5-495c-9f3d-cd33a7f93029",
     "S22": "a6186916-55d9-4f4e-9261-ee87a5dc2ca9",
-    "S23": "318bd9fa-7abc-4f8e-b104-51797630771b"
+    "S23": "318bd9fa-7abc-4f8e-b104-51797630771b",
+    "S24": "f494b51b-bfca-478e-bb96-4a2c488d4516",
+    "S25": "64e6767a-c5f5-44f6-97e2-0d20a9158bd4",
+    "S26": "bb9a7bf8-0610-4346-823b-ee1de65ed5a7",
+    "S27": "7bada8a7-2530-493c-a57f-4476b1f5fbd2"
   },
   "films": {
     "hero": {
-      "job": "c4b3bcf0-ba93-44c7-91d0-b4adbe7f823a",
-      "startSeconds": 1.4,
-      "mobileFocusX": 0.74,
-      "quality": 68
+      "job": "e9dfe710-fd5f-433e-a830-e767399b3ee9",
+      "startSeconds": 0,
+      "mobileFocusX": 0.64,
+      "quality": 52,
+      "soften": 0.7
+    },
+    "location": {
+      "job": "53c398e4-6eeb-44f0-a39e-063b605d2f4c",
+      "startSeconds": 0,
+      "mobileFocusX": 0.56,
+      "quality": 60
     },
     "dining": {
       "job": "6fed7eeb-f029-4571-a839-96c0f0bfe789",

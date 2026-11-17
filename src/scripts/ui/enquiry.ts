@@ -1,40 +1,53 @@
 /**
- * Enquiry forms: the booking form and the newsletter form.
+ * Enquiry: what happens when a booking form is sent. There are two of them,
+ * one in the booking section and one in the booking window.
  *
- * Neither has a service behind it yet. So that the forms still do something
- * real and honest, they open an email to the hotel with the details filled in.
- * When a booking engine is connected (`site.booking.engineUrl`), the booking
- * form sends the visitor there instead.
+ * There is no booking engine behind them yet. So that the form still does
+ * something real and honest, it opens an email to the hotel with the details
+ * filled in. When a booking engine is connected (`site.booking.engineUrl`),
+ * the form sends the visitor there instead.
  */
-import { dayAfter, toInputValue, toReadable } from '../lib/dates';
-import { find } from '../lib/dom';
+import { toReadable } from '../lib/dates';
+import { find, findAll } from '../lib/dom';
 
 function openEmail(to: string, subject: string, body: string) {
   const query = new URLSearchParams({ subject, body }).toString().replace(/\+/g, '%20');
   window.location.href = `mailto:${to}?${query}`;
 }
 
-export function initBookingForm(): void {
-  const form = find<HTMLFormElement>('[data-booking-form]');
-  const arrive = form && find<HTMLInputElement>('[data-booking-arrive]', form);
-  const leave = form && find<HTMLInputElement>('[data-booking-leave]', form);
-  const status = form && find('[data-booking-status]', form);
-  if (!form || !arrive || !leave) return;
+export function initBookingForms(): void {
+  findAll<HTMLFormElement>('[data-booking-form]').forEach(setUpForm);
+}
 
-  // Guests cannot arrive in the past, or leave before they arrive.
-  arrive.min = toInputValue(new Date());
-  leave.min = dayAfter(arrive.min);
-  arrive.addEventListener('change', () => {
-    if (!arrive.value) return;
-    leave.min = dayAfter(arrive.value);
-    if (leave.value && leave.value < leave.min) leave.value = leave.min;
+function setUpForm(form: HTMLFormElement): void {
+  const arrive = find<HTMLInputElement>('[data-date-input="arrive"]', form);
+  const leave = find<HTMLInputElement>('[data-date-input="leave"]', form);
+  const status = find('[data-booking-status]', form);
+  if (!arrive || !leave) return;
+
+  // The form says what is missing in its own words, beside the fields.
+  form.noValidate = true;
+  form.addEventListener('change', () => {
+    if (status && arrive.value && leave.value) status.textContent = '';
   });
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    const details = new FormData(form);
-    const guests = String(details.get('guests') ?? '');
 
+    if (!arrive.value || !leave.value) {
+      if (status) {
+        status.textContent = arrive.value
+          ? 'Please choose the day you leave.'
+          : 'Please choose the day you arrive, and the day you leave.';
+      }
+      // Open the calendar on the date that is missing.
+      const missing = arrive.value ? 'leave' : 'arrive';
+      const trigger = find<HTMLButtonElement>(`[data-date-trigger="${missing}"]`, form);
+      if (trigger?.getAttribute('aria-expanded') !== 'true') trigger?.click();
+      return;
+    }
+
+    const guests = String(new FormData(form).get('guests') ?? '');
     const engineUrl = form.dataset.engineUrl;
     if (engineUrl) {
       const query = new URLSearchParams({ arrive: arrive.value, leave: leave.value, guests });
@@ -61,23 +74,5 @@ export function initBookingForm(): void {
       status.textContent =
         'We have opened an email with your dates. Send it, and we will reply within a day.';
     }
-  });
-}
-
-export function initNewsletterForm(): void {
-  const form = find<HTMLFormElement>('[data-newsletter]');
-  const status = form && find('[data-newsletter-status]', form);
-  if (!form) return;
-
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const address = String(new FormData(form).get('email') ?? '');
-    const hotelEmail = find<HTMLFormElement>('[data-booking-form]')?.dataset.enquiryEmail ?? '';
-    openEmail(
-      hotelEmail,
-      'Please add me to your letters',
-      `Hello,\n\nPlease send your letters to ${address}.\n\nThank you.`,
-    );
-    if (status) status.textContent = 'We have opened an email for you to send. Thank you.';
   });
 }

@@ -28,12 +28,19 @@ export function initSmoothScroll(): ScrollLock {
     gsap.ticker.lagSmoothing(0);
   }
 
+  // The menu and the booking window can both hold the page still, and one can
+  // open as the other closes. The page moves again only when neither holds it.
+  let holds = 0;
+
   return {
     lock() {
+      holds += 1;
       lenis?.stop();
       root.classList.add(LOCKED_CLASS);
     },
     unlock() {
+      holds = Math.max(0, holds - 1);
+      if (holds > 0) return;
       lenis?.start();
       root.classList.remove(LOCKED_CLASS);
     },

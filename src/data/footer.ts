@@ -13,28 +13,11 @@ export const worthKnowing = [
   'The Wi-Fi reaches every room. It stops at the pool, on purpose.',
 ];
 
-export const footerLinks = [
-  { label: 'Rooms', href: pageHref('rooms') },
-  { label: 'Dining', href: pageHref('dining') },
-  { label: 'Things to do', href: pageHref('experiences') },
-  { label: 'The pool and the spa', href: pageHref('wellness') },
-  { label: 'Photographs', href: pageHref('photographs') },
-  { label: 'Offers', href: pageHref('offers') },
-  { label: 'Gift a stay', href: pageHref('gifts') },
-  { label: 'Celebrations', href: pageHref('celebrations') },
-];
-
 export const legalLinks = [
   { label: 'Privacy', href: pageHref('privacy') },
   { label: 'Terms', href: pageHref('terms') },
   { label: 'Work with us', href: pageHref('careers') },
   { label: 'Press', href: pageHref('press') },
 ];
-
-export const newsletter = {
-  label:
-    'A few times a year we write about the place: what is in flower, what the kitchen is cooking, when the rains have come. Would you like to hear from us?',
-  button: 'Yes, please',
-};
 
 export const signOff = 'We will keep a lamp lit for you.';

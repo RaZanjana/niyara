@@ -17,7 +17,7 @@ interface Scene {
 export const scenes = [
   { id: 'top', theme: 'dawn', label: 'Niyara' },
   { id: 'location', theme: 'first-light', label: 'Where we are' },
-  { id: 'arrival', theme: 'morning', label: 'Arriving' },
+  { id: 'arrival', theme: 'gateway', label: 'Arriving' },
   { id: 'rooms', theme: 'morning', label: 'Rooms' },
   { id: 'pool', theme: 'noon', label: 'The pool' },
   { id: 'things-to-do', theme: 'afternoon', label: 'Things to do' },

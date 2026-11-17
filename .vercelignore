@@ -1,0 +1,6 @@
+# Uploaded by `vercel deploy`: the source only. Vercel installs and builds it.
+node_modules
+dist
+.astro
+.claude
+.DS_Store

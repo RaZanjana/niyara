@@ -1,9 +1,8 @@
 /**
- * Smaller scroll effects that each take only a few lines:
- * pictures that drift slightly as they pass (parallax), and the roads on
- * the map drawing in.
+ * A smaller scroll effect that takes only a few lines:
+ * pictures that drift slightly as they pass (parallax).
  */
-import { find, findAll } from '../lib/dom';
+import { findAll } from '../lib/dom';
 import { gsap } from '../lib/motion';
 
 /**
@@ -31,24 +30,4 @@ export function createParallax(): () => void {
     );
   });
   return () => gsap.set(pictures, { clearProps: 'all' });
-}
-
-/** Map: each road draws itself from the hotel outwards when the map appears. */
-export function createMapDrawing(): () => void {
-  const map = find('[data-map]');
-  const roads = findAll<SVGPathElement>('[data-road]');
-  if (!map || roads.length === 0) return () => {};
-
-  gsap.fromTo(
-    roads,
-    { strokeDashoffset: 1 },
-    {
-      strokeDashoffset: 0,
-      duration: 1.8,
-      ease: 'power2.inOut',
-      stagger: 0.15,
-      scrollTrigger: { trigger: map, start: 'top 75%', once: true },
-    },
-  );
-  return () => gsap.set(roads, { clearProps: 'all' });
 }

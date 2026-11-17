@@ -1,83 +1,120 @@
 ---
 /**
- * Dining: the restaurant at dusk. As the visitor scrolls, the sky darkens
- * and the lamps come on (scripts/scenes/dining.ts). This is a short film
- * drawn on the canvas, with two photographs underneath that cross-fade the
- * same way until the film has loaded.
- * Without scripts the dusk picture is shown.
+ * Dining: the restaurant as dusk turns to night.
+ *
+ * The film fills the screen and holds still while the visitor scrolls: the
+ * sky darkens and the lanterns come on (scripts/scenes/dining.ts). The words
+ * come in on the right once that side of the picture has gone dark, so they
+ * are set on the night itself, with the gold of the lanterns as their accent.
+ * The page changes from day to night behind the film, and the film's top and
+ * bottom edges melt into its own glow: dusk above, night below.
+ *
+ * Two photographs lie under the film and cross-fade the same way until it
+ * has loaded. Without scripts the night picture is shown, with the words.
  */
 import { existsSync } from 'node:fs';
-import path from 'node:path';
+import Ambient from '@/components/ui/Ambient.astro';
 import Media from '@/components/ui/Media.astro';
 import Scene from '@/components/ui/Scene.astro';
 import TextLink from '@/components/ui/TextLink.astro';
-import { pageHref } from '@/data/routes';
 import sequences from '@/data/frame-sequences.json';
+import { pageHref } from '@/data/routes';
 import { getScene } from '@/data/scenes';
+import { publicFile } from '@/lib/ambient';
 import { frameUrl } from '@/scripts/lib/frames';
 
 const scene = getScene('dining');
-const pictureSizes = '(min-width: 56.25em) 60vw, 100vw';
 
 // The film is only switched on if its frames are in the project. Without
 // them, the two photographs cross-fade instead and nothing is missing.
 const { desktop, digits, extension } = sequences.dining;
-const firstFrame = path.join(process.cwd(), 'public', frameUrl(desktop.path, 0, digits, extension));
-const hasFilm = existsSync(firstFrame);
+const hasFilm = existsSync(publicFile(frameUrl(desktop.path, 0, digits, extension)));
 ---
 
 <Scene id="dining" class="dining">
-  <div class="dining__inner" data-scene-body>
-    <div class="dining__picture" data-dining>
-      <div class="dining__layers" data-parallax>
+  <div class="dining__stage" data-dining>
+    <div class="dining__glow">
+      <Ambient shot="S15" />
+      <Ambient shot="S16" class="dining__glow-night" data-dining-night />
+    </div>
+
+    <div class="dining__frame feather-y">
+      <div class="dining__layers" data-dining-layers>
         <div class="dining__layer">
-          <Media shot="S15" sizes={pictureSizes} />
+          <Media shot="S15" sizes="100vw" />
         </div>
         <div class="dining__layer dining__layer--night" data-dining-night>
-          <Media shot="S16" sizes={pictureSizes} decorative />
+          <Media shot="S16" sizes="100vw" decorative />
         </div>
         {hasFilm && <canvas class="dining__film" data-dining-canvas aria-hidden="true" />}
       </div>
+      <div class="dining__shade" data-dining-shade aria-hidden="true"></div>
     </div>
 
-    <div class="dining__text" data-reveal>
-      <p class="label">{scene.label}</p>
-      <h2 id="dining-title" class="dining__heading">
+    <div class="dining__text" data-dining-text>
+      <p class="dining__label" data-dining-line>
+        {scene.label}
+      </p>
+      <h2 id="dining-title" class="dining__heading" data-dining-line>
         Dinner is on the bank, as the lamps are lit.
       </h2>
-      <p>
+      <p data-dining-line>
         The Ambalama is our one restaurant: a long hall open on three sides to the water, with the
         bar and an open kitchen along the fourth. The cooking belongs to this part of the island:
         red rice from the fields next door, fish from the reservoir, buffalo curd with palm treacle.
         Most of it is cooked over wood, where you can watch.
       </p>
-      <p class="muted dining__note">
+      <p class="dining__note" data-dining-line>
         On full moon days no alcohol is served anywhere in Sri Lanka, including here. We make a very
         good lime and ginger soda instead.
       </p>
-      <TextLink href={pageHref('dining')}>Menus and opening hours</TextLink>
+      <div data-dining-line>
+        <TextLink href={pageHref('dining')}>Menus and opening hours</TextLink>
+      </div>
     </div>
   </div>
 </Scene>
 
 <style>
-  .dining__inner {
-    display: grid;
+  .dining {
+    /* Extra scroll distance during which night falls. Zero until the scroll
+       scripts switch it on, and only on a wide screen. */
+    --hold: 0svh;
   }
 
-  .dining__picture {
+  /* On a phone the words stand below the picture. They get the night color
+     of the section as their own ground, so they do not depend on how far
+     the page behind has darkened yet. */
+  .dining__stage {
     position: relative;
-    height: 32.5rem;
-    overflow: hidden;
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+    display: grid;
+    background: linear-gradient(to bottom, transparent 42svh, var(--surface) 66svh);
   }
 
+  .dining__glow,
   .dining__layers,
   .dining__layer,
-  .dining__film {
+  .dining__film,
+  .dining__shade {
     position: absolute;
     inset: 0;
+  }
+
+  .dining__glow {
+    --ambient-reach: 1.1;
+    --ambient-blur: 2.5rem;
+    /* On a phone the glow belongs to the picture, not to the text below it. */
+    bottom: auto;
+    height: 62svh;
+    min-height: 24rem;
+  }
+
+  .dining__frame {
+    --feather: 15%;
+    position: relative;
+    height: 62svh;
+    min-height: 24rem;
+    overflow: hidden;
   }
 
   /* The film covers the two photographs once its first frame is drawn. */
@@ -92,54 +129,97 @@ const hasFilm = existsSync(firstFrame);
     opacity: 1;
   }
 
-  /* The night picture is hidden until the scroll script fades it in. */
-  .dining__layer--night {
-    opacity: 0;
+  /* Night is the resting state. The scroll script starts at dusk instead,
+     and brings the night in. */
+  .dining__shade {
+    display: none;
   }
 
   .dining__text {
+    position: relative;
     display: grid;
     align-content: center;
     justify-items: start;
-    gap: 1.5rem;
-    padding: 0.5rem var(--gutter) var(--section-space);
+    gap: 1.4rem;
+    padding: 1.5rem var(--gutter) var(--section-space);
   }
 
   .dining__text p {
     max-width: 27.5rem;
   }
 
+  .dining__label {
+    color: var(--accent);
+    font-size: var(--text-small);
+    letter-spacing: 0.04em;
+  }
+
   .dining__heading {
+    max-width: 14ch;
     font-size: var(--text-title);
-    line-height: 1.06;
+    line-height: 1.04;
     letter-spacing: -0.01em;
   }
 
   .dining__note {
+    color: var(--ink-muted);
     font-size: var(--text-small);
   }
 
   @media (min-width: 56.25em) {
-    .dining__inner {
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-      min-height: clamp(47.5rem, 62vw, 57.5rem);
+    .dining {
+      height: calc(100svh + var(--hold));
+      min-height: 42rem;
     }
 
-    .dining__picture {
+    :global(html[data-motion='full']) .dining {
+      --hold: 115svh;
+    }
+
+    .dining__stage {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      min-height: 42rem;
+      background: none;
+    }
+
+    .dining__glow {
+      --ambient-reach: 1.2;
+      --ambient-blur: 3.5rem;
+      bottom: 0;
       height: auto;
-      /* Fade the top, the bottom and the right edge, where the text begins. */
-      -webkit-mask-image:
-        linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent),
-        linear-gradient(to right, #000 70%, transparent);
-      -webkit-mask-composite: source-in;
-      mask-image:
-        linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent),
-        linear-gradient(to right, #000 70%, transparent);
-      mask-composite: intersect;
+    }
+
+    .dining__frame {
+      position: absolute;
+      inset: 0;
+      height: auto;
+      min-height: 0;
+    }
+
+    /* Darkens the right of the picture, under the words, in the color of
+       the night around the restaurant. */
+    .dining__shade {
+      display: block;
+      background:
+        linear-gradient(
+          to left,
+          rgb(16 12 8 / 88%) 0%,
+          rgb(16 12 8 / 70%) 26%,
+          rgb(16 12 8 / 22%) 48%,
+          transparent 60%
+        ),
+        linear-gradient(to top, rgb(16 12 8 / 45%), transparent 34%);
     }
 
     .dining__text {
-      padding: var(--section-space) var(--gutter) var(--section-space) 2rem;
+      align-self: center;
+      justify-self: end;
+      width: min(31rem, 38vw);
+      margin-right: var(--gutter);
+      padding: 0;
+      text-shadow: 0 0 1.5rem rgb(16 12 8 / 60%);
     }
   }
 </style>

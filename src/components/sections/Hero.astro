@@ -1,7 +1,18 @@
 ---
 /**
- * Hero: the opening view. A short film of the reservoir at first light that
- * plays forward as the visitor scrolls (scripts/scenes/hero.ts).
+ * Hero: the opening shot. A film of the villas across the water at sunrise.
+ *
+ * - While the film loads, the title card covers the page (PageLoader). As
+ *   it parts, the camera begins to glide forward over the water and the name
+ *   rises letter by letter (scripts/scenes/hero.ts).
+ * - As the visitor scrolls, the film plays on, the camera pushes in and the
+ *   words lift away.
+ * - At the end the shot dissolves into the next one: the film of the
+ *   reservoirs from the air (Location), which is already waiting behind it.
+ *
+ * The picture is left clear and rich. The only shade on it is a soft shadow
+ * in the lower left, in the film's own darkest color, so the white words can
+ * be read; and a faint one along the top for the header.
  *
  * How it stays fast and safe:
  * - The first film frame is a normal image, so it shows at once.
@@ -13,6 +24,7 @@ import TextLink from '@/components/ui/TextLink.astro';
 import sequences from '@/data/frame-sequences.json';
 import { bookHref } from '@/data/navigation';
 import { sceneHref } from '@/data/scenes';
+import { site } from '@/data/site';
 import { frameUrl } from '@/scripts/lib/frames';
 
 const { desktop, mobile, digits, extension } = sequences.hero;
@@ -23,7 +35,7 @@ const narrowScreens = '(max-width: 56.24em)';
 
 <Scene id="top" class="hero">
   <div class="hero__stage" data-hero-stage>
-    <div class="hero__film feather-bottom">
+    <div class="hero__film" data-hero-film>
       <picture>
         <source
           media={narrowScreens}
@@ -36,43 +48,67 @@ const narrowScreens = '(max-width: 56.24em)';
           src={desktopPoster}
           width={desktop.width}
           height={desktop.height}
-          alt="The pavilions of Niyara across a misty reservoir at first light."
+          alt="The villas of Niyara across a still reservoir at sunrise, their lamps lit and reflected in the water."
           fetchpriority="high"
           decoding="async"
+          data-hero-poster
         />
       </picture>
       <canvas class="hero__canvas" data-hero-canvas aria-hidden="true"></canvas>
     </div>
 
+    <div class="hero__shade" aria-hidden="true"></div>
+
     <div class="hero__content" data-hero-content>
-      <h1 id="top-title" class="hero__title">
+      <p class="hero__place" data-hero-line>
+        <span lang="si" class="hero__sinhala">
+          {site.nameSinhala}
+        </span>
+        <span class="hero__rule" aria-hidden="true"></span>
+        <span>Anuradhapura, Sri Lanka</span>
+      </p>
+      <h1 id="top-title" class="hero__title" data-hero-title>
         Niyara
       </h1>
-      <p class="hero__lead">
-        A small hotel on the bank of an old reservoir, twenty minutes from the ancient city of
-        Anuradhapura.
+      <p class="hero__lead" data-hero-line>
+        A private estate of luxury villas on the bank of a two-thousand-year-old reservoir, in the
+        quiet of the ancient kingdom of Anuradhapura.
       </p>
-      <div class="hero__actions">
-        <a class="button" href={bookHref}>
+      <div class="hero__actions" data-hero-line>
+        <a class="button hero__button" href={bookHref} data-book-open aria-haspopup="dialog">
           Check availability
         </a>
-        <TextLink href={sceneHref('rooms')}>See the rooms</TextLink>
+        <TextLink href={sceneHref('rooms')}>See the villas</TextLink>
       </div>
     </div>
+
+    <p class="hero__cue" data-hero-cue aria-hidden="true">
+      <span>Scroll</span>
+      <i></i>
+    </p>
   </div>
 </Scene>
 
 <style>
   .hero {
-    /* Extra scroll distance during which the film plays. Zero until the
-       scroll scripts switch it on, so the page is never taller than it needs to be. */
+    /* `--hold` is the scroll distance over which the film plays. `--overlap`
+       is the further distance over which it dissolves into the next scene,
+       which slides up underneath it by the same amount (see Location).
+       Both are zero until the scroll scripts switch them on. */
     --hold: 0svh;
-    height: calc(100svh + var(--hold));
+    --overlap: 0svh;
+    z-index: 3;
+    height: calc(100svh + var(--hold) + var(--overlap));
     min-height: 35rem;
+    color: var(--color-on-photo);
   }
 
   :global(html[data-motion='full']) .hero {
-    --hold: 70svh;
+    --hold: 90svh;
+    --overlap: 100svh;
+    /* The section is taller than what it shows. Let clicks through the
+       empty part to the scene underneath. */
+    pointer-events: none;
   }
 
   .hero__stage {
@@ -81,15 +117,22 @@ const narrowScreens = '(max-width: 56.24em)';
     height: 100svh;
     min-height: 35rem;
     overflow: hidden;
+    background: var(--color-shadow);
+    pointer-events: auto;
   }
 
   .hero__film,
   .hero__poster,
-  .hero__canvas {
+  .hero__canvas,
+  .hero__shade {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+  }
+
+  .hero__film {
+    will-change: transform;
   }
 
   .hero__poster {
@@ -106,43 +149,63 @@ const narrowScreens = '(max-width: 56.24em)';
     opacity: 1;
   }
 
-  .hero__content {
-    --bottom-space: clamp(3.5rem, 8svh, 6rem);
-    position: absolute;
-    inset: auto var(--gutter) var(--bottom-space);
-    display: grid;
-    justify-items: start;
-    gap: 1.6rem;
-    isolation: isolate;
-  }
-
-  /* A veil of mist behind the words, in the color of the dawn sky. It keeps
-     the text readable wherever the film is dark, and lifts with the text as
-     the visitor starts to scroll. */
-  .hero__content::before {
-    position: absolute;
-    inset: -7rem calc(var(--gutter) * -1) calc(var(--bottom-space) * -1);
-    z-index: -1;
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      color-mix(in srgb, var(--surface) 82%, transparent) 38%,
-      color-mix(in srgb, var(--surface) 88%, transparent)
-    );
-    content: '';
+  /* The shade: the film's darkest color, only where the words are, and a
+     little along the top for the header. The rest of the picture is clear. */
+  .hero__shade {
+    background:
+      radial-gradient(
+        120% 85% at 0% 100%,
+        rgb(15 18 15 / 74%) 0%,
+        rgb(15 18 15 / 46%) 34%,
+        rgb(15 18 15 / 0%) 66%
+      ),
+      linear-gradient(to bottom, rgb(15 18 15 / 34%), rgb(15 18 15 / 0%) 18%);
     pointer-events: none;
   }
 
+  .hero__content {
+    position: absolute;
+    inset: auto var(--gutter) clamp(4.5rem, 11svh, 7.5rem);
+    display: grid;
+    justify-items: start;
+    gap: 1.5rem;
+  }
+
+  .hero__place {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: var(--text-small);
+    letter-spacing: 0.04em;
+    opacity: 0.92;
+  }
+
+  .hero__sinhala {
+    font-family: var(--font-sinhala);
+    font-size: 1.0625rem;
+    letter-spacing: 0;
+  }
+
+  .hero__rule {
+    width: 2.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
   .hero__title {
-    font-size: var(--text-hero);
-    line-height: 0.95;
-    letter-spacing: -0.01em;
+    margin: -0.5rem 0 0 -0.04em;
+    font-size: clamp(5.5rem, 13.5vw, 13.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.02em;
+    text-shadow: 0 0.04em 0.6em rgb(15 18 15 / 30%);
   }
 
   .hero__lead {
-    max-width: 29rem;
+    max-width: 31rem;
     font-size: var(--text-lead);
     line-height: 1.6;
+    text-shadow: 0 0 1.5rem rgb(15 18 15 / 50%);
   }
 
   .hero__actions {
@@ -153,20 +216,100 @@ const narrowScreens = '(max-width: 56.24em)';
     margin-top: 0.4rem;
   }
 
-  @media (min-width: 56.25em) {
-    :global(html[data-motion='full']) .hero {
-      --hold: 110svh;
+  /* On the film the button is white with dark words, whatever the theme. */
+  .hero__button {
+    border-color: var(--color-on-photo);
+    background: var(--color-on-photo);
+    color: var(--color-charcoal);
+  }
+
+  .hero__button:hover {
+    background: transparent;
+    color: var(--color-on-photo);
+  }
+
+  /* "Scroll", with a hairline that a drop of light runs down. */
+  .hero__cue {
+    position: absolute;
+    right: var(--gutter);
+    bottom: clamp(2.5rem, 6svh, 4rem);
+    display: none;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+  }
+
+  .hero__cue i {
+    position: relative;
+    width: 1px;
+    height: 4.5rem;
+    overflow: hidden;
+    background: rgb(251 248 243 / 28%);
+  }
+
+  .hero__cue i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-on-photo);
+    animation: hero-cue 2.6s var(--ease-in-out) infinite;
+  }
+
+  @keyframes hero-cue {
+    0% {
+      transform: translateY(-100%);
     }
 
-    /* On a wide screen the words sit over pale water, so a lighter veil is enough. */
-    .hero__content::before {
-      opacity: 0.55;
+    60%,
+    100% {
+      transform: translateY(100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Until the opening script takes over, the words are hidden. If the
+       script never runs, they come in a little later by themselves. */
+    :global(html.js) .hero [data-hero-line],
+    :global(html.js) .hero [data-hero-title],
+    :global(html.js) .hero [data-hero-cue] {
+      animation: hero-late 0.8s 3.2s ease-out backwards;
+    }
+
+    :global(html.js[data-hero-intro]) .hero [data-hero-line],
+    :global(html.js[data-hero-intro]) .hero [data-hero-title],
+    :global(html.js[data-hero-intro]) .hero [data-hero-cue] {
+      animation: none;
+    }
+
+    @keyframes hero-late {
+      from {
+        opacity: 0;
+      }
+    }
+
+    :global(html[data-motion='full']) .hero__cue {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 56.25em) {
+    :global(html[data-motion='full']) .hero {
+      --hold: 120svh;
     }
 
     .hero__actions {
       flex-direction: row;
       align-items: center;
       gap: 2.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__cue i::after {
+      animation: none;
     }
   }
 </style>

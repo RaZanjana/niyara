@@ -10,9 +10,11 @@ import { gsap, queries } from '../lib/motion';
 import { createArrival } from './arrival';
 import { createAtmosphere } from './atmosphere';
 import { createDining } from './dining';
+import { createExperiences } from './experiences';
 import { createHero } from './hero';
+import { createLocation } from './location';
 import { createReveals } from './reveals';
-import { createMapDrawing, createParallax } from './small-effects';
+import { createParallax } from './small-effects';
 
 export function initScrollScenes(): void {
   const root = document.documentElement;
@@ -35,11 +37,12 @@ export function initScrollScenes(): void {
       if (fullMotion) {
         cleanups.push(
           createHero({ wide }),
+          createLocation({ wide }),
           createArrival({ wide }),
+          createExperiences(),
           createReveals(),
           createDining({ wide }),
           createParallax(),
-          createMapDrawing(),
         );
       }
 

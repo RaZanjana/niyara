@@ -2,8 +2,14 @@
 /**
  * Pool: the long green-stone pool that looks out over the rice fields.
  * Moving a pointer or a finger over the picture sends ripples across the
- * water (scripts/ui/pool.ts).
+ * water (scripts/ui/small-interactions.ts). The rings are moved by transform
+ * only, on a layer of their own, so they follow smoothly.
+ *
+ * The picture's top and bottom edges melt into its own glow, and on a wide
+ * screen the words sit on a pane of dark green glass, the color of the water
+ * behind it.
  */
+import Ambient from '@/components/ui/Ambient.astro';
 import Media from '@/components/ui/Media.astro';
 import Scene from '@/components/ui/Scene.astro';
 import TextLink from '@/components/ui/TextLink.astro';
@@ -15,12 +21,19 @@ const scene = getScene('pool');
 
 <Scene id="pool" class="pool">
   <div class="pool__inner" data-scene-body>
-    <div class="pool__picture feather-y" data-ripples>
-      <div class="pool__picture-inner" data-parallax>
-        <Media shot="S10" sizes="100vw" />
+    <div class="pool__picture" data-ripples>
+      <Ambient shot="S10" />
+      <div class="pool__frame feather-y">
+        <div class="pool__picture-inner" data-parallax>
+          <Media shot="S10" sizes="100vw" />
+        </div>
       </div>
-      <span class="pool__ripple pool__ripple--near" data-ripple aria-hidden="true"></span>
-      <span class="pool__ripple pool__ripple--far" data-ripple aria-hidden="true"></span>
+      <!-- The rings have a layer of their own, outside the feathered picture,
+           so moving them never makes the browser redraw the picture. -->
+      <div class="pool__ripples" aria-hidden="true">
+        <span class="pool__ripple pool__ripple--near" data-ripple="near"></span>
+        <span class="pool__ripple pool__ripple--far" data-ripple="far"></span>
+      </div>
     </div>
 
     <div class="pool__panel" data-reveal>
@@ -44,42 +57,54 @@ const scene = getScene('pool');
   }
 
   .pool__picture {
+    --ambient-reach: 1.1;
+    --ambient-blur: 2.75rem;
     position: relative;
     height: 34rem;
+  }
+
+  .pool__frame {
+    --feather: 15%;
     overflow: hidden;
   }
 
+  .pool__frame,
   .pool__picture-inner {
     position: absolute;
     inset: 0;
   }
 
-  /* Two rings that follow the pointer, the wider one more slowly. */
+  /* Two rings that follow the pointer, the wider one more slowly. They sit at
+     the top left corner, centred on it, and the script moves them with a
+     transform only. The layer is clipped a little inside the picture, where
+     its feathered edges are still solid. */
+  .pool__ripples {
+    position: absolute;
+    inset: 12% 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
   .pool__ripple {
     position: absolute;
-    top: var(--y, 50%);
-    left: var(--x, 50%);
+    top: 0;
+    left: 0;
     width: var(--size);
     height: var(--size);
     margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
     border: 1px solid rgb(255 255 255 / 65%);
     border-radius: 50%;
     opacity: 0;
-    pointer-events: none;
-    transition:
-      top var(--speed) var(--ease-water),
-      left var(--speed) var(--ease-water),
-      opacity 0.8s ease;
+    transition: opacity 0.8s ease;
+    will-change: transform;
   }
 
   .pool__ripple--near {
     --size: 5.25rem;
-    --speed: 0.7s;
   }
 
   .pool__ripple--far {
     --size: 12rem;
-    --speed: 1.4s;
     border-color: rgb(255 255 255 / 35%);
   }
 
@@ -112,12 +137,24 @@ const scene = getScene('pool');
     /* The text sits low on the left, over the near water, so the pool's far
        edge and the rice fields beyond it stay in view. */
     .pool__panel {
+      /* On the glass the words are light, whatever the theme. */
+      --ink: #f6f2e9;
+      --ink-muted: #d6dbd0;
+      --accent: #ecc58f;
       position: absolute;
-      bottom: clamp(4.5rem, 7vw, 6.5rem);
-      left: clamp(1rem, 5vw, 5.5rem);
-      max-width: 26.25rem;
-      padding: 2rem;
-      background: var(--surface);
+      bottom: clamp(5.5rem, 9vw, 8rem);
+      left: var(--gutter);
+      max-width: 27.5rem;
+      padding: 2.25rem;
+      border: 1px solid rgb(246 242 233 / 16%);
+      background: rgb(24 38 30 / 56%);
+      -webkit-backdrop-filter: blur(22px) saturate(1.25);
+      backdrop-filter: blur(22px) saturate(1.25);
+      color: var(--ink);
+    }
+
+    .pool__panel :global(.label) {
+      color: var(--accent);
     }
   }
 

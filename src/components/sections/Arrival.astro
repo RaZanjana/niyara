@@ -1,10 +1,19 @@
 ---
 /**
  * Arrival: walking through the brick gateway into the courtyard.
- * The picture starts as a narrow doorway in a brick wall and opens to fill
- * the screen as the visitor scrolls (scripts/scenes/arrival.ts).
+ *
+ * The scene is the shade inside the gateway: dark, and the color of the
+ * brick in the picture. The courtyard is first seen as a tall slit of
+ * daylight, which opens until it fills the screen as the visitor scrolls
+ * (scripts/scenes/arrival.ts). Its light spills softly onto the dark around
+ * it, so nothing on screen has a color the picture does not have.
+ *
+ * The scene begins underneath the end of the film before it (Location), and
+ * its lower edge melts into its own glow, which reaches into the next section.
+ *
  * Without scripts, or with reduced motion, the picture is simply shown whole.
  */
+import Ambient from '@/components/ui/Ambient.astro';
 import Media from '@/components/ui/Media.astro';
 import Scene from '@/components/ui/Scene.astro';
 import { getScene } from '@/data/scenes';
@@ -13,20 +22,23 @@ const scene = getScene('arrival');
 ---
 
 <Scene id="arrival" class="arrival">
-  <div class="arrival__stage feather-y" data-arrival-stage>
-    <div class="arrival__wall" aria-hidden="true"></div>
-    <div class="arrival__doorway" data-arrival-doorway>
-      <div class="arrival__view" data-arrival-view>
-        <Media shot="S03" sizes="100vw" />
+  <div class="arrival__stage" data-arrival-stage>
+    <Ambient shot="S03" class="arrival__glow" data-arrival-glow />
+    <div class="arrival__frame feather-bottom">
+      <div class="arrival__doorway" data-arrival-doorway>
+        <div class="arrival__view" data-arrival-view>
+          <Media shot="S03" sizes="100vw" />
+        </div>
+        <div class="arrival__shade" aria-hidden="true"></div>
       </div>
     </div>
 
-    <div class="arrival__panel" data-arrival-panel data-theme="dusk">
-      <p class="label">{scene.label}</p>
+    <div class="arrival__panel" data-arrival-panel>
+      <p class="arrival__label">{scene.label}</p>
       <h2 id="arrival-title" class="arrival__heading">
         You come in through a brick gateway, and the road stays behind it.
       </h2>
-      <p>
+      <p class="arrival__text">
         Inside there is a courtyard, a long channel of still water, and someone waiting with a cold
         towel and a glass of lime.
       </p>
@@ -36,13 +48,19 @@ const scene = getScene('arrival');
 
 <style>
   .arrival {
+    /* See Location.astro for how `--hold` and `--overlap` work. */
     --hold: 0svh;
-    height: calc(100svh + var(--hold));
+    --overlap: 0svh;
+    z-index: 1;
+    height: calc(100svh + var(--overlap) + var(--hold));
     min-height: 35rem;
+    margin-top: calc(var(--overlap) * -2);
   }
 
   :global(html[data-motion='full']) .arrival {
-    --hold: 60svh;
+    --hold: 110svh;
+    --overlap: 100svh;
+    scroll-margin-top: -100svh;
   }
 
   .arrival__stage {
@@ -50,57 +68,78 @@ const scene = getScene('arrival');
     top: 0;
     height: 100svh;
     min-height: 35rem;
+  }
+
+  .arrival__glow {
+    --ambient-reach: 1.26;
+  }
+
+  .arrival__frame,
+  .arrival__doorway,
+  .arrival__view,
+  .arrival__shade {
+    position: absolute;
+    inset: 0;
+  }
+
+  .arrival__frame {
+    --feather: 14%;
     overflow: hidden;
   }
 
-  /* The brick wall around the doorway, with faint courses of brick. */
-  .arrival__wall {
-    position: absolute;
-    inset: 0;
+  /* Darkens the left of the picture, under the words, in the brown of its
+     own brick. */
+  .arrival__shade {
     background:
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0 calc(3.5rem - 1px),
-        rgb(0 0 0 / 12%) calc(3.5rem - 1px) 3.5rem
-      ),
-      var(--color-brick-deep);
-  }
-
-  .arrival__doorway,
-  .arrival__view {
-    position: absolute;
-    inset: 0;
+      linear-gradient(to right, rgb(29 22 17 / 78%), rgb(29 22 17 / 30%) 38%, transparent 60%),
+      linear-gradient(to top, rgb(29 22 17 / 55%), transparent 45%);
+    pointer-events: none;
   }
 
   .arrival__panel {
     position: absolute;
-    inset: auto var(--gutter) clamp(6rem, 16svh, 9.5rem);
+    inset: auto var(--gutter) clamp(5rem, 14svh, 8.5rem);
     display: grid;
     gap: 1.1rem;
-    padding: 1.625rem 1.5rem;
-    background: var(--surface);
+    max-width: 26rem;
     color: var(--ink);
+  }
+
+  .arrival__label {
+    color: var(--accent);
+    font-size: var(--text-small);
+    letter-spacing: 0.04em;
   }
 
   .arrival__heading {
     font-size: var(--text-title);
-    line-height: 1.12;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .arrival__text {
+    color: var(--ink-muted);
+  }
+
+  /* With full motion the words stand on the dark beside the slit of light, so
+     the picture needs no shade of its own. */
+  :global(html[data-motion='full']) .arrival__shade {
+    display: none;
   }
 
   @media (min-width: 56.25em) {
     :global(html[data-motion='full']) .arrival {
-      --hold: 90svh;
+      --hold: 140svh;
     }
 
     .arrival__panel {
-      inset: 50% auto auto clamp(1rem, 5vw, 5.5rem);
-      max-width: 25rem;
-      padding: 2rem;
+      inset: 50% auto auto var(--gutter);
+      max-width: min(27vw, 25rem);
       transform: translateY(-50%);
     }
 
     .arrival__heading {
-      font-size: clamp(1.75rem, 3vw, 2.625rem);
+      font-size: clamp(1.75rem, 2.9vw, 2.75rem);
     }
   }
 </style>

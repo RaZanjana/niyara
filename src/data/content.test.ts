@@ -37,7 +37,7 @@ describe('routes', () => {
 describe('pictures', () => {
   it('are all listed in the shot manifest', () => {
     const used = [
-      ...rooms.map((room) => room.shot),
+      ...rooms.flatMap((room) => room.shots),
       ...experiences.map((experience) => experience.shot),
       ...gallerySlides.map((slide) => slide.shot),
     ];

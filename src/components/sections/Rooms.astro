@@ -1,9 +1,16 @@
 ---
 /**
- * Rooms: the three kinds of room. Choosing a room dissolves to its picture
- * and shows its description (scripts/ui/rooms.ts).
- * The markup follows the standard "tabs" pattern, so it works with a keyboard
- * and a screen reader. Without scripts all three rooms are shown one after another.
+ * Rooms: the three kinds of villa, each with several pictures.
+ *
+ * - Choosing a kind of villa dissolves to its pictures and shows its
+ *   description. The markup follows the standard "tabs" pattern, so it works
+ *   with a keyboard and a screen reader.
+ * - Each villa's pictures change with the arrows on the picture, the small
+ *   pictures underneath it, a swipe, or the left and right keys. The next
+ *   picture fades in over the last and settles slowly back into place.
+ *
+ * The behavior is in scripts/ui/rooms.ts. Without scripts every villa is
+ * shown one after another, each with all its pictures.
  */
 import Media from '@/components/ui/Media.astro';
 import Scene from '@/components/ui/Scene.astro';
@@ -11,6 +18,9 @@ import SectionIntro from '@/components/ui/SectionIntro.astro';
 import TextLink from '@/components/ui/TextLink.astro';
 import { rooms, roomsIntro } from '@/data/rooms';
 import { pageHref } from '@/data/routes';
+import { shots } from '@/data/shots';
+
+const twoDigits = (value: number) => String(value).padStart(2, '0');
 ---
 
 <Scene id="rooms" class="rooms">
@@ -20,18 +30,71 @@ import { pageHref } from '@/data/routes';
     </SectionIntro>
 
     <div class="rooms__chooser" data-rooms>
-      <div class="rooms__stage" data-reveal>
-        {rooms.map((room, index) => (
-          <div class="rooms__picture" data-room-picture={room.id} data-active={index === 0}>
-            <div class="rooms__picture-inner" data-parallax>
-              <Media shot={room.shot} sizes="(min-width: 56.25em) 58vw, 100vw" />
+      <div class="rooms__view" data-reveal>
+        <div class="rooms__stage" data-room-stage>
+          {rooms.map((room, index) => (
+            <div
+              class="rooms__room"
+              data-room-picture={room.id}
+              data-active={index === 0}
+              role="group"
+              aria-roledescription="carousel"
+              aria-label={`Pictures of the ${room.name}`}
+            >
+              {room.shots.map((shot, shotIndex) => (
+                <div class="rooms__picture" data-room-frame data-active={shotIndex === 0}>
+                  <Media
+                    shot={shot}
+                    sizes="(min-width: 56.25em) 58vw, 100vw"
+                    loading={index === 0 && shotIndex === 0 ? 'eager' : 'lazy'}
+                  />
+                </div>
+              ))}
             </div>
+          ))}
+
+          <div class="rooms__nav">
+            <p class="rooms__count" aria-live="polite" data-room-count>
+              01 / {twoDigits(rooms[0]?.shots.length ?? 1)}
+            </p>
+            <button
+              type="button"
+              class="rooms__step"
+              data-room-previous
+              aria-label="Previous picture"
+            >
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M17 10H3M8 5L3 10L8 15" stroke="currentColor"></path>
+              </svg>
+            </button>
+            <button type="button" class="rooms__step" data-room-next aria-label="Next picture">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M3 10H17M12 5L17 10L12 15" stroke="currentColor"></path>
+              </svg>
+            </button>
           </div>
+        </div>
+
+        {rooms.map((room, index) => (
+          <ul class="rooms__thumbs" data-room-thumbs={room.id} hidden={index !== 0}>
+            {room.shots.map((shot, shotIndex) => (
+              <li>
+                <button
+                  type="button"
+                  data-room-thumb
+                  aria-label={shots[shot].name}
+                  aria-current={shotIndex === 0 ? 'true' : 'false'}
+                >
+                  <Media shot={shot} sizes="9rem" decorative />
+                </button>
+              </li>
+            ))}
+          </ul>
         ))}
       </div>
 
       <div class="rooms__details" data-reveal>
-        <div class="rooms__tabs" role="tablist" aria-label="Kinds of room">
+        <div class="rooms__tabs" role="tablist" aria-label="Kinds of villa">
           {rooms.map((room, index) => (
             <button
               type="button"
@@ -60,7 +123,7 @@ import { pageHref } from '@/data/routes';
         ))}
 
         <div class="rooms__links">
-          <TextLink href={pageHref('rooms')}>See this room</TextLink>
+          <TextLink href={pageHref('rooms')}>See this villa</TextLink>
           <TextLink href={pageHref('rooms')}>Compare all three</TextLink>
         </div>
       </div>
@@ -80,9 +143,27 @@ import { pageHref } from '@/data/routes';
     gap: 2rem;
   }
 
+  .rooms__view {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  /* ---- Without scripts: every villa's pictures, one villa after another ---- */
+
   .rooms__stage {
     display: grid;
     gap: 1rem;
+  }
+
+  .rooms__room {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .rooms__room .rooms__picture:first-child {
+    grid-column: 1 / -1;
   }
 
   .rooms__picture {
@@ -91,9 +172,9 @@ import { pageHref } from '@/data/routes';
     overflow: hidden;
   }
 
-  .rooms__picture-inner {
-    position: absolute;
-    inset: 0;
+  .rooms__nav,
+  .rooms__thumbs {
+    display: none;
   }
 
   .rooms__details {
@@ -120,11 +201,19 @@ import { pageHref } from '@/data/routes';
     background: none;
     color: var(--ink-muted);
     text-align: left;
-    transition: color var(--duration-quick) ease;
+    transition:
+      color var(--duration-quick) ease,
+      padding-left var(--duration-calm) var(--ease-water);
+  }
+
+  .rooms__tabs button:hover {
+    color: var(--ink);
   }
 
   .rooms__tabs button[aria-selected='true'] {
+    padding-left: 0.875rem;
     color: var(--ink);
+    box-shadow: inset 2px 0 0 var(--accent);
   }
 
   .rooms__name {
@@ -147,29 +236,150 @@ import { pageHref } from '@/data/routes';
     gap: 0.25rem 2.25rem;
   }
 
-  /* With scripts running, the pictures are stacked and cross-fade. */
+  /* ---- With scripts: one picture at a time ---- */
+
   :global(html.js) .rooms__stage {
     position: relative;
     display: block;
     aspect-ratio: 4 / 3;
     overflow: hidden;
     background: var(--surface-raised);
+    touch-action: pan-y;
   }
 
+  /* A villa's pictures stay in place while hidden, so changing back is instant. */
+  :global(html.js) .rooms__room {
+    position: absolute;
+    inset: 0;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity 1.2s ease,
+      visibility 0s 1.2s;
+  }
+
+  :global(html.js) .rooms__room[data-active] {
+    z-index: 1;
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  /* The picture coming in fades over the last, a little close, and settles
+     slowly back: a gentle push out, as a camera would. */
   :global(html.js) .rooms__picture {
     position: absolute;
     inset: 0;
     aspect-ratio: auto;
     opacity: 0;
-    transform: scale(1.06);
+    transform: scale(1.07);
     transition:
-      opacity 1.2s ease,
-      transform 2.6s var(--ease-water);
+      opacity 1.1s ease,
+      transform 0s 1.1s;
   }
 
   :global(html.js) .rooms__picture[data-active] {
+    z-index: 1;
     opacity: 1;
     transform: none;
+    transition:
+      opacity 1.1s ease,
+      transform 7s var(--ease-water);
+  }
+
+  /* The counter and the arrows, on a soft shadow at the foot of the picture. */
+  :global(html.js) .rooms__nav {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 3.5rem 1.25rem 1.1rem;
+    background: linear-gradient(to top, rgb(15 18 15 / 55%), rgb(15 18 15 / 0%));
+    color: var(--color-on-photo);
+    pointer-events: none;
+  }
+
+  .rooms__count {
+    margin-right: auto;
+    font-size: var(--text-fine);
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rooms__step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid rgb(251 248 243 / 55%);
+    border-radius: 50%;
+    background: rgb(15 18 15 / 18%);
+    color: inherit;
+    pointer-events: auto;
+    transition:
+      background-color var(--duration-quick) ease,
+      border-color var(--duration-quick) ease,
+      color var(--duration-quick) ease;
+  }
+
+  .rooms__step:hover {
+    border-color: var(--color-on-photo);
+    background: var(--color-on-photo);
+    color: var(--color-charcoal);
+  }
+
+  :global(html.js) .rooms__thumbs {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  :global(html.js) .rooms__thumbs[hidden] {
+    display: none;
+  }
+
+  .rooms__thumbs li {
+    flex: 0 1 8.5rem;
+  }
+
+  .rooms__thumbs button {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    border: 0;
+    background: none;
+    opacity: 0.5;
+    transition: opacity var(--duration-calm) ease;
+  }
+
+  .rooms__thumbs button:hover,
+  .rooms__thumbs button[aria-current='true'] {
+    opacity: 1;
+  }
+
+  /* A line under the current small picture, in the accent color. */
+  .rooms__thumbs button::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 -0.45rem;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-calm) var(--ease-water);
+  }
+
+  .rooms__thumbs button[aria-current='true']::after {
+    transform: scaleX(1);
   }
 
   /* Keeps the text block from jumping as descriptions change length. */
@@ -194,7 +404,9 @@ import { pageHref } from '@/data/routes';
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :global(html.js) .rooms__picture {
+    :global(html.js) .rooms__room,
+    :global(html.js) .rooms__picture,
+    :global(html.js) .rooms__picture[data-active] {
       transform: none;
       transition: none;
     }

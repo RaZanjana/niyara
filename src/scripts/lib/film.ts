@@ -23,7 +23,11 @@ function prefersLessData(): boolean {
 export function startFilm(
   name: FilmName,
   canvas: HTMLCanvasElement,
-  { wide }: { wide: boolean },
+  {
+    wide,
+    lead,
+    onProgress,
+  }: { wide: boolean; lead?: number; onProgress?: (fraction: number) => void },
 ): FrameSequence | undefined {
   if (prefersLessData()) return undefined;
 
@@ -34,6 +38,8 @@ export function startFilm(
     width: frames.width,
     height: frames.height,
     urlFor: (index) => frameUrl(frames.path, index, digits, extension),
+    lead,
+    onProgress,
   });
   void film.load();
   return film;

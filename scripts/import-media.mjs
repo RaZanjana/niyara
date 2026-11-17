@@ -14,7 +14,8 @@
  * Needs the free tool ffmpeg for the films.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -83,6 +84,11 @@ for (const [name, film] of Object.entries(sources.films)) {
     const crop =
       `crop='min(iw,ih*${shape})':'min(ih,iw/${shape})':` +
       `'max(0,min(iw-out_w,iw*${focus}-out_w/2))':'(ih-out_h)/2'`;
+    // ffmpeg cuts the frames out as PNG files in a temporary folder, and
+    // sharp then saves each one as WebP. (Not every copy of ffmpeg can write
+    // WebP itself, and sharp is already used for the pictures.)
+    const scratch = await mkdtemp(path.join(tmpdir(), 'niyara-frames-'));
+    const pattern = `%0${sequences[name].digits}d`;
     execFileSync(
       'ffmpeg',
       [
@@ -97,14 +103,20 @@ for (const [name, film] of Object.entries(sources.films)) {
         `fps=${count}/${seconds},${crop},scale=${width}:${height}:flags=lanczos`,
         '-frames:v',
         String(count),
-        '-c:v',
-        'libwebp',
-        '-quality',
-        String(film.quality ?? FRAME_QUALITY),
-        path.join(folder, `%0${sequences[name].digits}d.${sequences[name].extension}`),
+        path.join(scratch, `${pattern}.png`),
       ],
       { stdio: 'inherit' },
     );
+    for (const frame of await readdir(scratch)) {
+      let image = sharp(path.join(scratch, frame));
+      // A very slight softening removes the fine grain of a generated film,
+      // which costs a lot of bytes and cannot be seen at screen size.
+      if (film.soften) image = image.blur(film.soften);
+      await image
+        .webp({ quality: film.quality ?? FRAME_QUALITY, effort: 6 })
+        .toFile(path.join(folder, frame.replace(/png$/, sequences[name].extension)));
+    }
+    await rm(scratch, { recursive: true, force: true });
 
     const made = (await readdir(folder)).filter((f) => f.endsWith(sequences[name].extension));
     let bytes = 0;

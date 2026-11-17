@@ -8,7 +8,7 @@ interface GallerySlide {
 
 export const galleryIntro = {
   heading: 'Have a look around.',
-  hint: 'Move across a picture to look into it. Use the arrows, or choose another below.',
+  hint: 'The pictures change by themselves. Move across one to look into it, and it will wait for you.',
 };
 
 /** The gallery reuses pictures from the rest of the page, in the order of a day. */

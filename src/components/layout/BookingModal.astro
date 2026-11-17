@@ -1,0 +1,177 @@
+---
+/**
+ * BookingModal: the booking window that opens from "Book a stay".
+ *
+ * It does not scroll the page. The button itself grows into the window: its
+ * shape and color travel from where the button sits to the middle of the
+ * screen, the page dims behind it, and then the words and fields rise into
+ * place. Closing plays the same thing backwards, into the button
+ * (scripts/ui/booking-modal.ts).
+ *
+ * It is a native <dialog>, so the browser keeps keyboard focus inside it and
+ * closes it with the Escape key. Anything marked `data-book-open` opens it.
+ * Without scripts those are plain links to the booking section.
+ */
+import BookingForm from '@/components/ui/BookingForm.astro';
+import { bookingIntro } from '@/data/booking';
+import { getScene } from '@/data/scenes';
+import { site } from '@/data/site';
+
+const scene = getScene('book');
+const { contact } = site;
+---
+
+<!-- `data-lenis-prevent` lets the window scroll by itself while the page is held still. -->
+<dialog
+  class="book"
+  data-book-dialog
+  data-lenis-prevent
+  data-theme="night"
+  aria-labelledby="book-dialog-title"
+>
+  <!-- The shape that travels between the button and the window. -->
+  <div class="book__ghost" data-book-ghost aria-hidden="true"></div>
+
+  <div class="book__panel" data-book-panel>
+    <header class="book__head" data-book-line>
+      <p class="label">{scene.label}</p>
+      <button
+        class="round-button book__close"
+        type="button"
+        data-book-close
+        aria-label="Close the booking window"
+      >
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.25"></path>
+        </svg>
+      </button>
+    </header>
+
+    <h2 id="book-dialog-title" class="book__heading" data-book-line>
+      {bookingIntro.heading}
+    </h2>
+
+    <div class="book__form" data-book-line>
+      <BookingForm id="window" calendar="inline" />
+    </div>
+
+    <p class="book__note" data-book-line>
+      Or talk to us. The phone is answered by the people who work here, {contact.hours}:
+      <a href={contact.phoneHref}>{contact.phone}</a>
+    </p>
+  </div>
+</dialog>
+
+<style>
+  /* The dialog itself is the dimmed page: it covers the whole screen. */
+  .book {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow-y: auto;
+    /* `--veil` runs from 0 to 1 as the window opens (set by the script). */
+    --veil: 1;
+    background: rgb(9 11 12 / calc(var(--veil) * 72%));
+    -webkit-backdrop-filter: blur(calc(var(--veil) * 14px));
+    backdrop-filter: blur(calc(var(--veil) * 14px));
+    color: var(--ink);
+    overscroll-behavior: contain;
+  }
+
+  .book:not([open]) {
+    display: none;
+  }
+
+  .book::backdrop {
+    background: none;
+  }
+
+  .book__ghost {
+    position: fixed;
+    display: none;
+    pointer-events: none;
+  }
+
+  .book__panel {
+    display: grid;
+    align-content: start;
+    gap: 1.75rem;
+    min-height: 100%;
+    padding: 1.25rem var(--gutter) 2.5rem;
+    background: var(--surface);
+  }
+
+  .book__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .book__close {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .book__heading {
+    max-width: 14ch;
+    margin-bottom: 0.5rem;
+    font-size: var(--text-display);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+  }
+
+  .book__note {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    color: var(--ink-muted);
+    font-size: var(--text-small);
+  }
+
+  .book__note a {
+    color: var(--ink);
+    white-space: nowrap;
+    text-underline-offset: 0.35em;
+    text-decoration-thickness: 1px;
+  }
+
+  /* On a wide screen the window is a panel in the upper middle. It is placed
+     from the top, so that it grows downwards when the calendar opens. */
+  @media (min-width: 56.25em) {
+    .book__panel {
+      width: min(62rem, calc(100% - 2 * var(--gutter)));
+      min-height: 0;
+      margin: clamp(4.5rem, 11svh, 8rem) auto 4rem;
+      padding: 2.25rem 3.5rem 3rem;
+      border: 1px solid var(--line);
+      box-shadow: 0 3.5rem 7rem -2rem rgb(0 0 0 / 70%);
+    }
+
+    .book__heading {
+      max-width: none;
+    }
+  }
+</style>
+
+<!-- The form inside the window: the button takes a row of its own. -->
+<style is:global>
+  /* Above the note below it, so the open guests list lies over that note. */
+  .book__form {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (min-width: 56.25em) {
+    .book__form .bform__submit {
+      grid-column: 1 / -1;
+      justify-self: start;
+      min-width: 16rem;
+    }
+  }
+</style>

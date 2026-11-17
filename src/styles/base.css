@@ -26,13 +26,19 @@ html {
 body {
   margin: 0;
   /* `--page-bg` is updated while scrolling by scripts/scenes/atmosphere.ts. */
-  background: var(--page-bg, var(--color-mist));
+  background: var(--page-bg, var(--surface));
   color: var(--ink);
   font-family: var(--font-text);
   font-size: var(--text-body);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* A glow may reach past the sides of the screen. Clip it there, without
+   making a scroll container (which would break `position: sticky`). */
+main {
+  overflow-x: clip;
 }
 
 h1,
@@ -170,21 +176,59 @@ button {
   display: none;
 }
 
-/** Fades the top and bottom edges of a picture into the page. */
+/**
+ * Feathered edges: the top and bottom of a picture fade out along a soft
+ * curve, never a straight ramp, so no edge can be seen. What shows through is
+ * the picture's own glow (see `.ambient`), so the fade is made of the
+ * picture's own colors. Set `--feather` to change how deep the fade is.
+ */
+.feather-y,
+.feather-top,
+.feather-bottom {
+  --feather: 16%;
+  --feather-in:
+    transparent 0, rgb(0 0 0 / 7%) calc(var(--feather) * 0.16),
+    rgb(0 0 0 / 28%) calc(var(--feather) * 0.4), rgb(0 0 0 / 66%) calc(var(--feather) * 0.7),
+    #000 var(--feather);
+  --feather-out:
+    #000 calc(100% - var(--feather)), rgb(0 0 0 / 66%) calc(100% - var(--feather) * 0.7),
+    rgb(0 0 0 / 28%) calc(100% - var(--feather) * 0.4),
+    rgb(0 0 0 / 7%) calc(100% - var(--feather) * 0.16), transparent 100%;
+}
+
 .feather-y {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 16%,
-    #000 84%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, var(--feather-in), var(--feather-out));
+  mask-image: linear-gradient(to bottom, var(--feather-in), var(--feather-out));
+}
+
+.feather-top {
+  -webkit-mask-image: linear-gradient(to bottom, var(--feather-in), #000 100%);
+  mask-image: linear-gradient(to bottom, var(--feather-in), #000 100%);
 }
 
 .feather-bottom {
-  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 76%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0, #000 76%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, var(--feather-out));
+  mask-image: linear-gradient(to bottom, #000 0, var(--feather-out));
+}
+
+/**
+ * Ambient glow: a tiny, blurred copy of a picture, laid behind it and reaching
+ * a little past its top and bottom. Where the picture's edges are feathered,
+ * this is what shows through, so a picture melts into the page in its own
+ * colors. Made by components/ui/Ambient.astro.
+ */
+.ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ambient img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(var(--ambient-blur, 3.5rem)) saturate(1.15);
+  transform: scale(1.04, var(--ambient-reach, 1.3));
 }
 
 /** Set by scripts/lib/smooth-scroll.ts while the menu is open. */

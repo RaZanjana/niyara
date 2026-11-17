@@ -1,0 +1,722 @@
+---
+/**
+ * BookingForm: the dates, the guests and the "Check availability" button.
+ * Used twice: in the booking section, and in the booking window that opens
+ * from "Book a stay" (layout/BookingModal.astro).
+ *
+ * The date fields and the guests list are drawn by the site, not by the
+ * browser, so they look the same everywhere and match the rest of the page:
+ * - Choosing a date opens a calendar. The arrival is picked first, then the
+ *   departure, and the nights between them are marked (scripts/ui/calendar.ts).
+ * - The guests list opens under its field (scripts/ui/select.ts).
+ * Both work with a keyboard and a screen reader.
+ *
+ * Without scripts, the browser's own date fields and list are shown instead.
+ *
+ * No booking engine is connected yet. Until `site.booking.engineUrl` is set,
+ * submitting the form opens an email enquiry with the chosen dates
+ * (scripts/ui/enquiry.ts).
+ */
+import { guestOptions } from '@/data/booking';
+import { site } from '@/data/site';
+
+interface Props {
+  /** A short name that keeps the ids of two forms on one page apart. */
+  id: string;
+  /**
+   * "floating": the calendar opens over the content below the form.
+   * "inline":   the calendar opens inside the form and pushes it taller.
+   * On a phone it is always inline.
+   */
+  calendar?: 'floating' | 'inline';
+}
+
+const { id, calendar = 'floating' } = Astro.props;
+const dates = [
+  { name: 'arrive', label: 'Arriving' },
+  { name: 'leave', label: 'Leaving' },
+];
+---
+
+<form
+  class:list={['bform', `bform--${calendar}`]}
+  data-booking-form
+  data-engine-url={site.booking.engineUrl}
+  data-enquiry-email={site.contact.email}
+>
+  <div class="bform__dates" data-dates>
+    {dates.map((date) => (
+      <div class="bform__field">
+        <label class="bform__label" id={`${id}-${date.name}-label`} for={`${id}-${date.name}`}>
+          {date.label}
+        </label>
+        <input
+          class="bform__native"
+          id={`${id}-${date.name}`}
+          type="date"
+          name={date.name}
+          required
+          data-date-input={date.name}
+        />
+        <button
+          type="button"
+          class="bform__control"
+          data-date-trigger={date.name}
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-controls={`${id}-calendar`}
+          aria-labelledby={`${id}-${date.name}-label ${id}-${date.name}-value`}
+        >
+          <span class="bform__value" id={`${id}-${date.name}-value`}>
+            <span class="bform__value-main" data-date-value={date.name}>
+              Choose a date
+            </span>
+            <span class="bform__value-note" data-date-note={date.name} />
+          </span>
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path
+              d="M2.5 4.5H15.5V15.5H2.5V4.5ZM2.5 8H15.5M6 2.5V6M12 2.5V6"
+              stroke="currentColor"
+            />
+          </svg>
+        </button>
+      </div>
+    ))}
+
+    <div
+      class="calendar"
+      id={`${id}-calendar`}
+      role="dialog"
+      aria-label="Choose your dates"
+      data-calendar
+      inert
+    >
+      <div class="calendar__body">
+        <div class="calendar__head">
+          <button
+            type="button"
+            class="round-button calendar__step"
+            data-calendar-previous
+            aria-label="Earlier months"
+          >
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M17 10H3M8 5L3 10L8 15" stroke="currentColor" />
+            </svg>
+          </button>
+          <p class="calendar__hint" data-calendar-hint aria-live="polite" />
+          <button
+            type="button"
+            class="round-button calendar__step"
+            data-calendar-next
+            aria-label="Later months"
+          >
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M3 10H17M12 5L17 10L12 15" stroke="currentColor" />
+            </svg>
+          </button>
+        </div>
+        <div class="calendar__months" data-calendar-months />
+        <div class="calendar__foot">
+          <p class="calendar__summary" data-calendar-summary />
+          <button type="button" class="calendar__text-button" data-calendar-clear>
+            Clear
+          </button>
+          <button type="button" class="calendar__text-button" data-calendar-done>
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bform__field bform__field--guests" data-select>
+    <label class="bform__label" id={`${id}-guests-label`} for={`${id}-guests`}>
+      Guests
+    </label>
+    <select class="bform__native" id={`${id}-guests`} name="guests" data-select-native>
+      {guestOptions.map((option) => (
+        <option>{option}</option>
+      ))}
+    </select>
+    <button
+      type="button"
+      class="bform__control"
+      role="combobox"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls={`${id}-guests-list`}
+      aria-labelledby={`${id}-guests-label ${id}-guests-value`}
+      data-select-button
+    >
+      <span class="bform__value">
+        <span class="bform__value-main" id={`${id}-guests-value`} data-select-value>
+          {guestOptions[0]}
+        </span>
+      </span>
+      <svg
+        class="bform__chevron"
+        aria-hidden="true"
+        width="18"
+        height="18"
+        viewBox="0 0 18 18"
+        fill="none"
+      >
+        <path d="M4 7L9 12L14 7" stroke="currentColor" />
+      </svg>
+    </button>
+    <ul
+      class="listbox"
+      id={`${id}-guests-list`}
+      role="listbox"
+      aria-labelledby={`${id}-guests-label`}
+      data-select-list
+    >
+      {guestOptions.map((option, index) => (
+        <li
+          id={`${id}-guests-option-${index}`}
+          role="option"
+          aria-selected={index === 0 ? 'true' : 'false'}
+          data-select-option={option}
+        >
+          <span>{option}</span>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" />
+          </svg>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <button class="button bform__submit" type="submit">
+    Check availability
+  </button>
+  <p class="bform__status" role="status" data-booking-status></p>
+</form>
+
+<!-- Global, because the calendar's days are drawn by a script. -->
+<style is:global>
+  .bform {
+    position: relative;
+    display: grid;
+    gap: 1.5rem 1.25rem;
+  }
+
+  /* No gap between the rows here: the closed calendar is a row of no height,
+     and a gap above it would push the date fields out of line with the others. */
+  .bform__dates {
+    position: relative;
+    display: grid;
+    gap: 0 1.25rem;
+    min-width: 0;
+  }
+
+  .bform__dates .bform__field + .bform__field {
+    margin-top: 1.5rem;
+  }
+
+  .bform__field {
+    position: relative;
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .bform__label {
+    color: var(--ink-muted);
+    font-size: var(--text-fine);
+    letter-spacing: 0.03em;
+  }
+
+  /* ---- Without scripts: the browser's own fields ---- */
+
+  .bform__native {
+    width: 100%;
+    /* Date fields refuse to shrink below their natural width without this. */
+    min-width: 0;
+    height: var(--control-height);
+    padding: 0 0.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 1rem;
+    color-scheme: dark;
+  }
+
+  .bform__control,
+  .bform .listbox,
+  .bform .calendar {
+    display: none;
+  }
+
+  html.js .bform__native {
+    display: none;
+  }
+
+  /* ---- With scripts: a field is its value, set large, on a single line ---- */
+
+  html.js .bform__control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    min-height: 4rem;
+    padding: 0.25rem 0 0.75rem;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: none;
+    color: var(--ink);
+    text-align: left;
+    transition: border-color var(--duration-quick) ease;
+  }
+
+  /* The line under a field turns to gold from the left while it is open. */
+  .bform__field::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-calm) var(--ease-water);
+    pointer-events: none;
+  }
+
+  .bform__field:has(.bform__control[aria-expanded='true'])::after,
+  .bform__field:has(.bform__control:hover)::after {
+    transform: scaleX(1);
+  }
+
+  .bform__control svg {
+    flex: none;
+    color: var(--ink-muted);
+    transition:
+      color var(--duration-quick) ease,
+      transform var(--duration-calm) var(--ease-water);
+  }
+
+  .bform__control:hover svg,
+  .bform__control[aria-expanded='true'] svg {
+    color: var(--accent);
+  }
+
+  .bform__control[aria-expanded='true'] .bform__chevron {
+    transform: rotate(180deg);
+  }
+
+  .bform__value {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .bform__value-main {
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2vw, 1.75rem);
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bform__value-main[data-empty] {
+    color: var(--ink-muted);
+  }
+
+  .bform__value-note {
+    color: var(--ink-muted);
+    font-size: var(--text-fine);
+    line-height: 1.3;
+  }
+
+  .bform__value-note:empty {
+    display: none;
+  }
+
+  .bform__status {
+    color: var(--accent);
+    font-size: var(--text-small);
+  }
+
+  .bform__status:empty {
+    display: none;
+  }
+
+  /* ---- The guests list ---- */
+
+  html.js .bform .listbox {
+    position: absolute;
+    inset: calc(100% + 0.5rem) 0 auto;
+    z-index: var(--layer-popover);
+    display: block;
+    margin: 0;
+    padding: 0.5rem;
+    border: 1px solid var(--line);
+    background: var(--surface-raised);
+    box-shadow: 0 1.75rem 3.5rem -1.25rem rgb(0 0 0 / 65%);
+    list-style: none;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    transition:
+      opacity 0.3s ease,
+      transform 0.5s var(--ease-out-expo),
+      visibility 0s 0.5s;
+  }
+
+  html.js .bform .listbox[data-open] {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .listbox li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3rem;
+    padding: 0 0.875rem;
+    color: var(--ink-muted);
+    font-family: var(--font-display);
+    font-size: 1.3125rem;
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-quick) ease,
+      color var(--duration-quick) ease,
+      padding-left var(--duration-calm) var(--ease-water);
+  }
+
+  .listbox li svg {
+    flex: none;
+    color: var(--accent);
+    opacity: 0;
+  }
+
+  .listbox li[aria-selected='true'] {
+    color: var(--ink);
+  }
+
+  .listbox li[aria-selected='true'] svg {
+    opacity: 1;
+  }
+
+  /* The option the keyboard or the pointer is on. */
+  .listbox li[data-current] {
+    padding-left: 1.25rem;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--ink);
+  }
+
+  /* ---- The calendar ---- */
+
+  /* It opens downwards from nothing: the row of this one-row grid grows from
+     zero to the height of its content, which CSS can animate. */
+  html.js .bform .calendar {
+    display: grid;
+    grid-template-rows: 0fr;
+    grid-column: 1 / -1;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.7s var(--ease-out-expo),
+      opacity 0.4s ease;
+  }
+
+  html.js .bform .calendar[data-open] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .calendar__body {
+    display: grid;
+    gap: 1.5rem;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .calendar[data-open] .calendar__body {
+    padding-block: 2rem 0.25rem;
+  }
+
+  .calendar__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .calendar__step {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .calendar__hint {
+    color: var(--accent);
+    font-size: var(--text-small);
+    text-align: center;
+  }
+
+  .calendar__months {
+    display: grid;
+    gap: 2rem 3rem;
+  }
+
+  .calendar__month {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  /* The second month is only shown where there is room beside the first. */
+  .calendar__month + .calendar__month {
+    display: none;
+  }
+
+  .calendar__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .calendar__grid {
+    display: grid;
+    gap: 0.25rem 0;
+  }
+
+  .calendar__week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .calendar__weekday {
+    padding-bottom: 0.4rem;
+    color: var(--ink-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .calendar__cell {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 2.75rem;
+  }
+
+  /* The band that joins the nights of a stay. It runs through the middle of
+     each day, and stops halfway under the first and the last. */
+  .calendar__cell::before {
+    content: '';
+    position: absolute;
+    inset: 0.25rem 0;
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+    opacity: 0;
+    transition: opacity var(--duration-quick) ease;
+  }
+
+  .calendar__cell[data-range]::before {
+    opacity: 1;
+  }
+
+  .calendar__cell[data-range='start']::before {
+    left: 50%;
+  }
+
+  .calendar__cell[data-range='end']::before {
+    right: 50%;
+  }
+
+  /* While the departure is still being chosen, the band is only a suggestion. */
+  .calendar__cell[data-preview]::before {
+    background: color-mix(in srgb, var(--accent) 11%, transparent);
+  }
+
+  .calendar__day {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: none;
+    color: var(--ink);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color var(--duration-quick) ease,
+      border-color var(--duration-quick) ease,
+      color var(--duration-quick) ease;
+  }
+
+  .calendar__day:hover:not(:disabled) {
+    border-color: var(--accent);
+  }
+
+  .calendar__day:disabled {
+    color: var(--ink-muted);
+    opacity: 0.38;
+    cursor: default;
+  }
+
+  /* Today has a small dot under its number. */
+  .calendar__day[data-today]::after {
+    content: '';
+    position: absolute;
+    inset: auto 50% 0.3rem;
+    width: 0.1875rem;
+    height: 0.1875rem;
+    margin-left: -0.09375rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .calendar__day[aria-pressed='true'] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--color-charcoal);
+  }
+
+  .calendar__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .calendar__summary {
+    margin-right: auto;
+    color: var(--ink-muted);
+    font-size: var(--text-small);
+  }
+
+  .calendar__text-button {
+    min-height: 2.75rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font-size: var(--text-small);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.4em;
+  }
+
+  .calendar__text-button:hover {
+    color: var(--accent);
+  }
+
+  /* From a large phone up, the two dates sit side by side. */
+  @media (min-width: 30em) {
+    .bform__dates {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .bform__dates .bform__field + .bform__field {
+      margin-top: 0;
+    }
+  }
+
+  @media (min-width: 56.25em) {
+    .bform {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 2rem 2.5rem;
+    }
+
+    .bform__status {
+      grid-column: 1 / -1;
+    }
+
+    .calendar__months {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .calendar__month + .calendar__month {
+      display: grid;
+    }
+
+    /* The first month's name leans left and the second's right, towards
+       their arrows. */
+    .calendar__head {
+      margin-bottom: -0.5rem;
+    }
+
+    /* Inline: the three fields share one row, and the calendar opens under
+       all of them, as wide as the form. The date fields are lifted out of
+       their group (`display: contents`) so that they can share that row. */
+    .bform--inline {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .bform--inline .bform__dates {
+      display: contents;
+    }
+
+    .bform--inline .bform__field--guests {
+      order: 1;
+    }
+
+    html.js .bform--inline .calendar {
+      order: 2;
+    }
+
+    .bform--inline .bform__submit {
+      order: 3;
+    }
+
+    .bform--inline .bform__status {
+      order: 4;
+    }
+
+    .bform--inline .calendar__months {
+      gap: 2rem 5rem;
+    }
+
+    /* Floating: the calendar is a panel that hangs under the date fields,
+       over whatever comes below the form. */
+    html.js .bform--floating .calendar {
+      position: absolute;
+      top: calc(100% + 0.75rem);
+      left: 0;
+      z-index: var(--layer-popover);
+      width: max(100%, 44rem);
+      pointer-events: none;
+    }
+
+    html.js .bform--floating .calendar[data-open] {
+      pointer-events: auto;
+    }
+
+    .bform--floating .calendar__body {
+      padding-inline: 2rem;
+      background: var(--surface-raised);
+      box-shadow: 0 2.5rem 5rem -1.5rem rgb(0 0 0 / 70%);
+    }
+
+    .bform--floating .calendar[data-open] .calendar__body {
+      padding-block: 1.75rem 1.25rem;
+      outline: 1px solid var(--line);
+      outline-offset: -1px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.js .bform .calendar,
+    html.js .bform .listbox,
+    .bform__field::after,
+    .listbox li {
+      transition: none;
+    }
+  }
+</style>

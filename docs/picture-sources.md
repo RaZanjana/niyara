@@ -21,12 +21,19 @@ These fixed the look of the hotel. Later pictures were made with them attached.
 | A5  | Tank Pavilion, inside  | `aaacbb13-3dc1-4d76-a6e9-b48a4681e456` |
 | A6  | The pool               | `1d565162-5cad-43db-a443-4faf2a24eaa4` |
 | A7  | The Ambalama           | `b4b551b8-f0cc-4474-bff8-f0e301b95a82` |
+| L1  | Reservoirs, from high  | `9b8ef9a6-069b-45ca-a9e5-a474bcbf34a1` |
+| L2  | The bank, from low     | `ee5c25d6-4d0c-42c0-9031-500003350390` |
+
+L1 and L2 are the two views of the film of the reservoirs: where the camera
+starts, high over the chain of reservoirs, and the low view of the bank it
+comes down towards. L2 was made first, from A1, S20 and S01, and L1 was made
+from L2, so they show the same place.
 
 ## Pictures on the site
 
 | ID  | Picture                       | Higgsfield job                         |
 | --- | ----------------------------- | -------------------------------------- |
-| S01 | Opening film, first frame     | `4bea45a2-29dc-4b47-8a28-fd5559c33c0e` |
+| S01 | Opening film, first frame     | `4d627777-19e2-4d55-9d03-8c4fd23223c8` |
 | S02 | A pavilion at dawn (spare)    | `9f743642-5cac-437f-a9c6-216525c14136` |
 | S03 | Through the gateway           | `0799da08-57cd-4e85-a9a4-fb52a8bb608a` |
 | S04 | Tank Pavilion, from the bed   | `0e36fda8-3f62-4c4e-8e97-d4f55317c026` |
@@ -45,17 +52,32 @@ These fixed the look of the hotel. Later pictures were made with them attached.
 | S21 | The old city by bicycle       | `44597eb0-2ca5-495c-9f3d-cd33a7f93029` |
 | S22 | Mihintale at sunset           | `a6186916-55d9-4f4e-9261-ee87a5dc2ca9` |
 | S23 | A day in Wilpattu             | `318bd9fa-7abc-4f8e-b104-51797630771b` |
+| S24 | Courtyard Suite, the bedroom  | `f494b51b-bfca-478e-bb96-4a2c488d4516` |
+| S25 | Courtyard Suite, outdoor bath | `64e6767a-c5f5-44f6-97e2-0d20a9158bd4` |
+| S26 | Bund Villa, the bedroom       | `bb9a7bf8-0610-4346-823b-ee1de65ed5a7` |
+| S27 | Bund Villa, the pool at dusk  | `7bada8a7-2530-493c-a57f-4476b1f5fbd2` |
+
+S01 is an upload, not a generation: it is the picture
+`c1d7d795-e8a6-4352-8364-3e18ede6a7c1`, made from S02, L2 and S20, with the
+left edge cropped off because a second sun had appeared there. S02 is now
+used as the third picture of the Tank Pavilion.
 
 ## Films
 
-| Film                  | Made from       | Higgsfield job                         | Notes                                     |
-| --------------------- | --------------- | -------------------------------------- | ----------------------------------------- |
-| Opening film          | S01, first only | `c4b3bcf0-ba93-44c7-91d0-b4adbe7f823a` | Seedance 2.5, 6 seconds, 1080p, no sound. |
-| Dining, dusk to night | S15 to S16      | `6fed7eeb-f029-4571-a839-96c0f0bfe789` | Seedance 2.5, 4 seconds, 720p, no sound.  |
+| Film                  | Made from       | Higgsfield job                         | Notes                                      |
+| --------------------- | --------------- | -------------------------------------- | ------------------------------------------ |
+| Opening film          | S01, first only | `e9dfe710-fd5f-433e-a830-e767399b3ee9` | Seedance 2.5, 5 seconds, 1080p, no sound.  |
+| Reservoirs, from air  | L1, with L2     | `53c398e4-6eeb-44f0-a39e-063b605d2f4c` | Seedance 2.5, 10 seconds, 1080p, no sound. |
+| Dining, dusk to night | S15 to S16      | `6fed7eeb-f029-4571-a839-96c0f0bfe789` | Seedance 2.5, 4 seconds, 720p, no sound.   |
 
-The opening film was first made as a cheap draft (`f6cc752f-3244-43fa-afb5-514d59083daf`)
-and then finished from that draft, so the camera move is the same. Its first
-second is thick mist, so the site starts the film a little way in.
+The opening film starts on S01 and glides slowly toward the villas, in clear
+air. It was made at full quality directly, without a draft, because a single
+start picture and a slow, simple camera move rarely go wrong.
+
+The film of the reservoirs starts on L1 as its first frame, with L2 given only
+as a reference for how the bank looks close up, and the prompt asks for one
+continuous descent. It was first made as a cheap draft
+(`1fb198f8-ca1c-4af9-bcd5-510bdf5a5e6d`) and then finished from that draft.
 
 ## Replaced versions
 
@@ -67,3 +89,11 @@ Kept here so nobody reuses them by mistake.
   `4860f272-16b2-4e6d-8768-2a802a10e3ec` (dusk), `3081b9a5-7586-4bd2-8408-3398b0fa7ee7` (night)
   and `dfc3da3c-a622-496a-b173-d47163c94bc7` (dinner), and the film
   `7ead5a72-2dd8-4cbe-9fe1-ec6868788ac2`.
+- A first film of the reservoirs that was given L1 as its first frame and L2
+  as its last: `c16e7c43-25c4-4e7f-8060-9eac1a5b45bd`. The two pictures do not
+  line up exactly, so halfway through it blended between them and showed two
+  suns and two stupas for a moment.
+- The first opening film, misty at first light, and its draft:
+  `c4b3bcf0-ba93-44c7-91d0-b4adbe7f823a` and `f6cc752f-3244-43fa-afb5-514d59083daf`,
+  with its first frame `4bea45a2-29dc-4b47-8a28-fd5559c33c0e`. Replaced because the
+  mist made the opening look grey and flat.

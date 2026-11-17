@@ -1,0 +1,315 @@
+---
+/**
+ * PageLoader: the opening title card, shown while the first film loads.
+ *
+ * The name appears letter by letter above its own reflection, the way the
+ * villas stand over the reservoir. Between them runs a single line, the
+ * water line of the wordmark, which grows as the opening film's frames
+ * arrive, with a count beside it. When everything is ready the line spreads
+ * to the edges of the screen and the dark parts along it, above and below,
+ * like still water opening, onto the first frame of the film
+ * (scripts/ui/loader.ts).
+ *
+ * The two halves each carry a soft glow made from the film's first frame, so
+ * the dark is already tinted with the colors about to appear.
+ *
+ * It is shown only when scripts run. If the script ever fails, it removes
+ * itself after a few seconds, so the page is never left covered.
+ */
+import Ambient from '@/components/ui/Ambient.astro';
+import sequences from '@/data/frame-sequences.json';
+import { site } from '@/data/site';
+import { frameUrl } from '@/scripts/lib/frames';
+
+const { desktop, digits, extension } = sequences.hero;
+const firstFrame = frameUrl(desktop.path, 0, digits, extension);
+const letters = site.name.toUpperCase().split('');
+---
+
+<div class="loader" data-loader>
+  <p class="visually-hidden" role="status" data-loader-status>
+    Loading {site.name}
+  </p>
+
+  <div class="loader__half loader__half--top" data-loader-half aria-hidden="true">
+    <div class="loader__glow">
+      <Ambient frame={firstFrame} />
+    </div>
+  </div>
+  <div class="loader__half loader__half--bottom" data-loader-half aria-hidden="true">
+    <div class="loader__glow">
+      <Ambient frame={firstFrame} />
+    </div>
+  </div>
+
+  <div class="loader__line" aria-hidden="true">
+    <span data-loader-line></span>
+  </div>
+
+  <!-- The name stands on the water line, and its reflection hangs below it. -->
+  <div class="loader__above" aria-hidden="true">
+    <p class="loader__sinhala" lang="si" data-loader-fade>
+      {site.nameSinhala}
+    </p>
+    <p class="loader__name" data-loader-name>
+      {letters.map((letter) => (
+        <span data-loader-letter>{letter}</span>
+      ))}
+    </p>
+  </div>
+  <div class="loader__below" aria-hidden="true">
+    <div class="loader__reflection">
+      <p class="loader__name">
+        {letters.map((letter) => (
+          <span data-loader-echo>{letter}</span>
+        ))}
+      </p>
+    </div>
+    <p class="loader__tagline" data-loader-fade>
+      Private villas on an ancient reservoir
+    </p>
+  </div>
+
+  <div class="loader__foot" aria-hidden="true" data-loader-fade>
+    <span>Anuradhapura, Sri Lanka</span>
+    <span class="loader__count">
+      <span data-loader-count>000</span>
+    </span>
+  </div>
+</div>
+
+<style>
+  .loader {
+    display: none;
+  }
+
+  /* Only with scripts, which are what take it away again. */
+  :global(html.js) .loader {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--layer-popover) + 10);
+    display: block;
+    color: var(--color-on-photo);
+    /* If the script never takes over, fade out by itself. */
+    animation: loader-away 0.8s 7s ease forwards;
+  }
+
+  :global(html.js[data-loader]) .loader {
+    animation: none;
+  }
+
+  @keyframes loader-away {
+    to {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+
+  /* ---- The two halves of the dark, which part along the water line ---- */
+
+  .loader__half {
+    position: absolute;
+    inset-inline: 0;
+    height: 50%;
+    overflow: hidden;
+    background: var(--color-shadow);
+    will-change: transform;
+  }
+
+  .loader__half--top {
+    top: 0;
+  }
+
+  .loader__half--bottom {
+    bottom: 0;
+  }
+
+  /* Each half shows its own part of one glow the height of the screen, so
+     together they look like a single picture until they part. */
+  .loader__glow {
+    --ambient-blur: 4.5rem;
+    --ambient-reach: 1;
+    position: absolute;
+    inset-inline: 0;
+    height: 100svh;
+    opacity: 0.42;
+  }
+
+  .loader__half--top .loader__glow {
+    top: 0;
+  }
+
+  .loader__half--bottom .loader__glow {
+    bottom: 0;
+  }
+
+  /* Darker at the edges, so the light gathers around the name. */
+  .loader__half::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    height: 100svh;
+    background: radial-gradient(
+      70% 60% at 50% 50%,
+      rgb(15 18 15 / 0%),
+      rgb(15 18 15 / 55%) 70%,
+      rgb(15 18 15 / 85%)
+    );
+  }
+
+  .loader__half--top::after {
+    top: 0;
+  }
+
+  .loader__half--bottom::after {
+    bottom: 0;
+  }
+
+  /* ---- The water line, the full width of the screen ---- */
+
+  .loader__line {
+    position: absolute;
+    top: 50%;
+    inset-inline: 0;
+    height: 1px;
+    margin-top: -0.5px;
+  }
+
+  /* `--reach` is the share of the screen the line may grow to while loading:
+     the width of the name. The script sets the growth itself. */
+  .loader__line span {
+    --line-color: var(--color-on-photo);
+    display: block;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--line-color) 18%,
+      var(--line-color) 82%,
+      transparent
+    );
+    opacity: 0.7;
+    transform: scaleX(0);
+  }
+
+  /* ---- The name, its reflection, and the words around them ---- */
+
+  .loader__above,
+  .loader__below {
+    position: absolute;
+    left: 50%;
+    display: grid;
+    justify-items: center;
+    width: max-content;
+    transform: translateX(-50%);
+  }
+
+  .loader__above {
+    bottom: 50%;
+    padding-bottom: 0.2rem;
+  }
+
+  .loader__below {
+    top: 50%;
+    padding-top: 0.2rem;
+  }
+
+  .loader__sinhala {
+    margin-bottom: clamp(1.25rem, 3svh, 2rem);
+    font-family: var(--font-sinhala);
+    font-size: 1.0625rem;
+    opacity: 0.8;
+  }
+
+  /* The line height is about the height of the capitals, so the name stands
+     right on the water line and its reflection begins right under it. */
+  .loader__name {
+    --spacing: 0.34em;
+    display: flex;
+    /* Letter spacing adds space after the last letter too. Even it out. */
+    padding-left: var(--spacing);
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 10vw, 7.5rem);
+    line-height: 0.7;
+    letter-spacing: var(--spacing);
+  }
+
+  .loader__name span {
+    display: inline-block;
+  }
+
+  /* The reflection: the name upside down, faint, fading downwards and
+     swaying a little, as in the footer. */
+  .loader__reflection {
+    height: 0.62em;
+    overflow: hidden;
+    font-size: clamp(2.75rem, 10vw, 7.5rem);
+    -webkit-mask-image: linear-gradient(to bottom, #000, transparent 90%);
+    mask-image: linear-gradient(to bottom, #000, transparent 90%);
+  }
+
+  .loader__reflection .loader__name {
+    font-size: 1em;
+    opacity: 0.2;
+    transform: scaleY(-1);
+    transform-origin: 50% 50%;
+    animation: loader-sway 7s ease-in-out infinite;
+  }
+
+  @keyframes loader-sway {
+    0%,
+    100% {
+      transform: scaleY(-1) skewX(-2deg);
+    }
+
+    50% {
+      transform: scaleY(-1) skewX(2deg);
+    }
+  }
+
+  .loader__tagline {
+    margin-top: clamp(0.5rem, 1.5svh, 1.25rem);
+    color: var(--color-lamp);
+    font-family: var(--font-display);
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-style: italic;
+    text-align: center;
+  }
+
+  .loader__foot {
+    position: absolute;
+    inset: auto var(--gutter) clamp(1.75rem, 5svh, 3rem);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: var(--text-fine);
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+  }
+
+  .loader__count {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.16em;
+  }
+
+  /* Until the script brings them in, the letters and words wait out of
+     sight. If it never runs, they appear by themselves. */
+  :global(html.js:not([data-loader])) .loader [data-loader-letter],
+  :global(html.js:not([data-loader])) .loader [data-loader-echo],
+  :global(html.js:not([data-loader])) .loader [data-loader-fade] {
+    animation: loader-show 0.6s 1.2s ease backwards;
+  }
+
+  @keyframes loader-show {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loader__reflection .loader__name {
+      animation: none;
+    }
+  }
+</style>

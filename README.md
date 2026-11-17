@@ -1,7 +1,7 @@
 # Niyara
 
-The homepage of Niyara, a small hotel on the bank of an old reservoir near
-Anuradhapura, Sri Lanka. The page follows one day at the hotel, from dawn to
+The homepage of Niyara, a private estate of luxury villas on the bank of an
+ancient reservoir near Anuradhapura, Sri Lanka. The page follows one day at the hotel, from dawn to
 night, and tells it through light, color and slow movement as you scroll.
 
 ## Run it
@@ -44,9 +44,10 @@ GitHub runs `npm run verify` on every push and pull request.
 src/
   data/         All words, prices, links and colors. Edit content here.
   components/
-    ui/         Small shared pieces (a picture, a section heading, the map).
-    layout/     Header, menu and footer.
+    ui/         Small shared pieces (a picture, its glow, a heading, the booking form).
+    layout/     Header, menu, booking window and footer.
     sections/   One file per section of the homepage, in page order.
+  lib/          Helpers that run while the site is built (the glow pictures).
   layouts/      The page shell: head tags, fonts, header, footer.
   pages/        One file per page. index.astro is the homepage.
   scripts/
@@ -62,22 +63,23 @@ docs/           How the site works and how to add pictures.
 
 ## Common changes
 
-| I want to...                     | Edit                                             |
-| -------------------------------- | ------------------------------------------------ |
-| Change wording, prices or FAQs   | The matching file in `src/data/`                 |
-| Change phone, email or address   | `src/data/site.ts`                               |
-| Change the menu links            | `src/data/navigation.ts`                         |
-| Change a time-of-day color       | `src/data/themes.ts`                             |
-| Change type sizes or spacing     | `src/styles/tokens.css`                          |
-| Add a photograph                 | Drop the file in `src/assets/images/`            |
-| Connect a booking engine         | `booking.engineUrl` in `src/data/site.ts`        |
-| Let search engines list the site | `allowIndexing` in `src/data/site.ts`            |
-| Reorder or add a section         | `src/data/scenes.ts` and `src/pages/index.astro` |
+| I want to...                                 | Edit                                             |
+| -------------------------------------------- | ------------------------------------------------ |
+| Change wording, prices or FAQs               | The matching file in `src/data/`                 |
+| Change phone, email, address or social pages | `src/data/site.ts`                               |
+| Change the menu links                        | `src/data/navigation.ts`                         |
+| Change a time-of-day color                   | `src/data/themes.ts`                             |
+| Change type sizes or spacing                 | `src/styles/tokens.css`                          |
+| Add a photograph                             | Drop the file in `src/assets/images/`            |
+| Connect a booking engine                     | `booking.engineUrl` in `src/data/site.ts`        |
+| Let search engines list the site             | `allowIndexing` in `src/data/site.ts`            |
+| Reorder or add a section                     | `src/data/scenes.ts` and `src/pages/index.astro` |
 
 ## Pictures and films
 
-All the pictures and both films (the opening scene and the dining scene) were
-made in Higgsfield and are saved in the project:
+All the pictures and the three films (the opening scene, the reservoirs from
+the air and the dining scene) were made in Higgsfield and are saved in the
+project:
 
 - pictures in `src/assets/images/`, named by shot ID, and
 - film frames in `public/frames/`.
@@ -85,12 +87,25 @@ made in Higgsfield and are saved in the project:
 [docs/assets.md](docs/assets.md) explains how to replace or add one, and
 [docs/picture-sources.md](docs/picture-sources.md) lists where each one came from.
 
+## Hosting
+
+The site is hosted on Vercel, in the project `niyara`, at
+https://niyara-zeta.vercel.app. To publish the code on your computer:
+
+```bash
+vercel deploy --prod
+```
+
+The project's `SITE_URL` setting on Vercel holds that address, for the
+canonical and sharing links. Change it when the site moves to its own domain.
+`.vercelignore` keeps `node_modules` and old build output from being uploaded.
+
 ## Before the site goes public
 
-- The phone number, email and address in `src/data/site.ts` are made up. Replace them.
+- The phone number, email, address and social pages in `src/data/site.ts` are stand-ins. Replace them.
 - The site asks search engines not to list it. Set `allowIndexing` to `true` when ready.
-- The booking and newsletter forms open an email to the hotel. Connect real services first.
-- Set the `SITE_URL` setting to the real web address when building.
+- The booking form opens an email to the hotel. Connect a real booking engine first.
+- Point `SITE_URL` on Vercel at the real domain once it is connected.
 
 ## More
 

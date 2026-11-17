@@ -2,17 +2,12 @@
 /**
  * SiteFooter: practical help for a guest who is about to travel
  * (how to get here, how to reach a person, what to pack), followed by
- * the page links and the hotel name set very large over its reflection.
+ * where to follow the hotel, and the hotel name set very large over its
+ * reflection.
  */
+import SocialLinks from '@/components/ui/SocialLinks.astro';
 import TextLink from '@/components/ui/TextLink.astro';
-import {
-  footerLinks,
-  gettingHere,
-  legalLinks,
-  newsletter,
-  signOff,
-  worthKnowing,
-} from '@/data/footer';
+import { gettingHere, legalLinks, signOff, worthKnowing } from '@/data/footer';
 import { pageHref } from '@/data/routes';
 import { site } from '@/data/site';
 
@@ -60,40 +55,11 @@ const { contact } = site;
       </section>
     </div>
 
-    <div class="footer__more">
-      <nav aria-label="Footer">
-        <ul class="footer__links">
-          {footerLinks.map((link) => (
-            <li>
-              <a href={link.href}>{link.label}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <form class="footer__news" data-newsletter>
-        <label class="muted" for="newsletter-email">
-          {newsletter.label}
-        </label>
-        <div class="footer__news-row">
-          <input
-            id="newsletter-email"
-            name="email"
-            type="email"
-            autocomplete="email"
-            placeholder="Your email address"
-            required
-          />
-          <button class="button button--outline" type="submit">
-            {newsletter.button}
-          </button>
-        </div>
-        <p class="footer__news-status muted" role="status" data-newsletter-status></p>
-      </form>
-    </div>
-
     <div class="footer__close">
-      <p class="footer__sign-off">{signOff}</p>
+      <div class="footer__follow">
+        <p class="footer__sign-off">{signOff}</p>
+        <SocialLinks />
+      </div>
 
       <!-- The name over its own reflection in the water. Decorative only. -->
       <div class="footer__name" aria-hidden="true">
@@ -247,6 +213,11 @@ const { contact } = site;
     gap: clamp(1.75rem, 3vw, 2.5rem);
   }
 
+  .footer__follow {
+    display: grid;
+    gap: 2rem;
+  }
+
   .footer__sign-off {
     color: var(--accent);
     font-family: var(--font-display);
@@ -325,6 +296,11 @@ const { contact } = site;
   }
 
   @media (min-width: 56.25em) {
+    .footer__follow {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+    }
+
     .footer__help {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }

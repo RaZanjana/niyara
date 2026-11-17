@@ -4,19 +4,38 @@
     "digits": 4,
     "desktop": {
       "path": "/frames/hero/desktop",
-      "count": 110,
-      "width": 1600,
-      "height": 900,
+      "count": 72,
+      "width": 1440,
+      "height": 810,
       "budgetKb": 6000
     },
     "mobile": {
       "path": "/frames/hero/mobile",
-      "count": 56,
-      "width": 720,
-      "height": 1280,
+      "count": 36,
+      "width": 612,
+      "height": 1088,
       "budgetKb": 2000
     },
     "standIn": false
+  },
+  "location": {
+    "extension": "webp",
+    "digits": 4,
+    "standIn": false,
+    "desktop": {
+      "path": "/frames/location/desktop",
+      "count": 132,
+      "width": 1600,
+      "height": 900,
+      "budgetKb": 7500
+    },
+    "mobile": {
+      "path": "/frames/location/mobile",
+      "count": 72,
+      "width": 720,
+      "height": 1280,
+      "budgetKb": 2800
+    }
   },
   "dining": {
     "extension": "webp",

@@ -1,8 +1,18 @@
 ---
 /**
- * Experiences ("Things to do"): a row of cards that scrolls sideways.
- * The row is a normal scrolling area, so it works by swipe, trackpad and
- * keyboard. The arrow buttons move it one card at a time (scripts/ui/scroller.ts).
+ * Experiences ("Things to do"): a row of cards that travels sideways.
+ *
+ * - With full motion, the row holds still on screen and scrolling up or down
+ *   slides the cards across it (scripts/scenes/experiences.ts). The pictures
+ *   drift inside their frames as they pass, a little slower than the cards.
+ * - With a mouse, the card under the pointer comes forward: it tilts toward
+ *   the pointer, its picture moves in closer, a soft light follows the
+ *   pointer across it, a fine frame draws itself, and the other cards step
+ *   back (scripts/ui/small-interactions.ts).
+ * - Without scripts, or with reduced motion, the row is a normal sideways
+ *   scrolling area that works by swipe, trackpad and keyboard.
+ *
+ * The arrow buttons move the row one card at a time in every case.
  */
 import Media from '@/components/ui/Media.astro';
 import Scene from '@/components/ui/Scene.astro';
@@ -10,6 +20,8 @@ import SectionIntro from '@/components/ui/SectionIntro.astro';
 import TextLink from '@/components/ui/TextLink.astro';
 import { experiences, experiencesIntro } from '@/data/experiences';
 import { pageHref } from '@/data/routes';
+
+const twoDigits = (value: number) => String(value).padStart(2, '0');
 ---
 
 <Scene id="things-to-do" class="experiences">
@@ -20,45 +32,61 @@ import { pageHref } from '@/data/routes';
       </SectionIntro>
     </div>
 
-    <div class="experiences__row" data-scroller data-reveal>
-      <ul
-        class="experiences__track no-scrollbar"
-        data-scroller-track
-        tabindex="0"
-        aria-label="Things to do. Scroll sideways for more."
-      >
-        {experiences.map((experience) => (
-          <li class="experiences__card">
-            <div class="experiences__picture">
-              <Media shot={experience.shot} sizes="(min-width: 56.25em) 23rem, 75vw" />
-            </div>
-            <h3 class="experiences__title">{experience.title}</h3>
-            <p>{experience.text}</p>
-          </li>
-        ))}
-      </ul>
+    <div class="experiences__run" data-scroller>
+      <div class="experiences__pin">
+        <ul
+          class="experiences__track no-scrollbar"
+          data-scroller-track
+          tabindex="0"
+          aria-label="Things to do. Scroll for more."
+        >
+          {experiences.map((experience, index) => (
+            <li class="experiences__card" data-card>
+              <div class="experiences__picture">
+                <div class="experiences__image" data-card-image>
+                  <Media shot={experience.shot} sizes="(min-width: 56.25em) 28rem, 75vw" />
+                </div>
+                <span class="experiences__light" aria-hidden="true" />
+                <span class="experiences__frame" aria-hidden="true" />
+                <span class="experiences__number" aria-hidden="true">
+                  {twoDigits(index + 1)}
+                </span>
+                <h3 class="experiences__title">{experience.title}</h3>
+              </div>
+              <p class="experiences__text">{experience.text}</p>
+            </li>
+          ))}
+        </ul>
 
-      <div class="container experiences__controls">
-        <button
-          type="button"
-          class="round-button"
-          data-scroller-previous
-          aria-label="Previous things to do"
-        >
-          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M17 10H3M8 5L3 10L8 15" stroke="currentColor"></path>
-          </svg>
-        </button>
-        <button
-          type="button"
-          class="round-button"
-          data-scroller-next
-          aria-label="More things to do"
-        >
-          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M3 10H17M12 5L17 10L12 15" stroke="currentColor"></path>
-          </svg>
-        </button>
+        <div class="container experiences__controls">
+          <p class="experiences__count" aria-hidden="true">
+            <span data-scroller-count>01</span>
+            <span class="experiences__bar">
+              <span data-scroller-progress />
+            </span>
+            <span>{twoDigits(experiences.length)}</span>
+          </p>
+          <button
+            type="button"
+            class="round-button"
+            data-scroller-previous
+            aria-label="Previous things to do"
+          >
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M17 10H3M8 5L3 10L8 15" stroke="currentColor"></path>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="round-button"
+            data-scroller-next
+            aria-label="More things to do"
+          >
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M3 10H17M12 5L17 10L12 15" stroke="currentColor"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -81,14 +109,19 @@ import { pageHref } from '@/data/routes';
     padding-block: var(--section-space);
   }
 
-  .experiences__row {
+  .experiences__pin {
     display: grid;
+    /* Without this the column grows as wide as all the cards together. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
   }
 
   .experiences__track {
+    /* A card is as wide as the screen allows, and never so tall that the
+       row does not fit on one screen. */
+    --card: min(75vw, 22.5rem, calc((100svh - 20rem) / 1.25));
     display: flex;
-    gap: clamp(1rem, 3.4vw, 3rem);
+    gap: clamp(1rem, 2.6vw, 2.5rem);
     margin: 0;
     padding: 0 var(--gutter);
     overflow-x: auto;
@@ -100,34 +133,142 @@ import { pageHref } from '@/data/routes';
 
   .experiences__card {
     display: grid;
-    flex: 0 0 min(75vw, 22.5rem);
+    flex: 0 0 var(--card);
     align-content: start;
-    gap: 1rem;
+    gap: 1.1rem;
+    perspective: 60rem;
     scroll-snap-align: start;
+    transition:
+      opacity 0.7s ease,
+      transform 0.9s var(--ease-water);
   }
 
   .experiences__picture {
     position: relative;
     aspect-ratio: 4 / 5;
-    margin-bottom: 0.5rem;
     overflow: hidden;
+    color: var(--color-on-photo);
+    transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition:
+      transform 0.9s var(--ease-water),
+      box-shadow 0.9s var(--ease-water);
+  }
+
+  /* The picture is a little wider than its frame, so it can drift sideways
+     as the card travels, and move in closer under the pointer. */
+  .experiences__image {
+    position: absolute;
+    inset: 0 -8%;
+    transition:
+      scale 2.2s var(--ease-water),
+      translate 1.2s var(--ease-water);
+  }
+
+  /* A shadow at the foot of the picture, for the title to stand on. */
+  .experiences__picture::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgb(15 18 15 / 80%) 0%,
+      rgb(15 18 15 / 34%) 26%,
+      transparent 50%
+    );
+    pointer-events: none;
+    transition: opacity 0.9s ease;
+  }
+
+  /* A soft light that follows the pointer across the picture. */
+  .experiences__light {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(
+      26rem circle at var(--light-x, 50%) var(--light-y, 50%),
+      rgb(255 236 204 / 34%),
+      transparent 62%
+    );
+    mix-blend-mode: soft-light;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+
+  /* A fine frame, set in from the edge, that draws itself corner to corner. */
+  .experiences__frame {
+    position: absolute;
+    inset: 0.875rem;
+    z-index: 1;
+    border: 1px solid rgb(251 248 243 / 62%);
+    clip-path: inset(0 100% 100% 0);
+    transition: clip-path 1.1s var(--ease-in-out);
+    pointer-events: none;
+  }
+
+  .experiences__number,
+  .experiences__title {
+    position: absolute;
+    z-index: 2;
+    inset-inline: 1.5rem;
+  }
+
+  .experiences__number {
+    top: 1.5rem;
+    font-size: var(--text-fine);
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.9;
   }
 
   .experiences__title {
-    font-size: var(--text-heading);
-    line-height: 1.2;
+    bottom: 1.4rem;
+    font-size: clamp(1.625rem, 2.3vw, 2.125rem);
+    line-height: 1.08;
+    letter-spacing: -0.005em;
+    transition: transform 0.9s var(--ease-water);
+  }
+
+  .experiences__text {
+    color: var(--ink-muted);
+    transition: color 0.6s ease;
   }
 
   .experiences__controls {
     display: none;
+    align-items: center;
     gap: 0.75rem;
   }
 
-  /* The arrow buttons only help where there is a mouse, and only with scripts. */
-  @media (hover: hover) {
-    :global(html.js) .experiences__controls {
-      display: flex;
-    }
+  :global(html.js) .experiences__controls {
+    display: flex;
+  }
+
+  .experiences__count {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 1rem;
+    max-width: 22rem;
+    margin-right: auto;
+    color: var(--ink-muted);
+    font-size: var(--text-fine);
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .experiences__bar {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .experiences__bar span {
+    display: block;
+    height: 100%;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left;
   }
 
   .experiences__planner {
@@ -148,9 +289,84 @@ import { pageHref } from '@/data/routes';
     gap: 0.25rem 2.25rem;
   }
 
+  /* ---- With full motion: the row holds still and scrolling moves the cards ---- */
+
+  :global(html[data-motion='full']) .experiences__inner {
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  /* `--travel` is how far the cards have to go, set by the script. The
+     section is made that much taller, and that scrolling moves them. */
+  :global(html[data-motion='full']) .experiences__run {
+    height: calc(100svh + var(--travel, 0px));
+  }
+
+  :global(html[data-motion='full']) .experiences__pin {
+    position: sticky;
+    top: 0;
+    align-content: center;
+    height: 100svh;
+    padding-top: var(--header-height);
+    overflow: hidden;
+  }
+
+  :global(html[data-motion='full']) .experiences__track {
+    overflow: visible;
+    scroll-snap-type: none;
+    will-change: transform;
+  }
+
+  /* ---- The card under the pointer ---- */
+
+  @media (hover: hover) and (pointer: fine) {
+    .experiences__track:has(.experiences__card:hover) .experiences__card:not(:hover) {
+      opacity: 0.5;
+      transform: scale(0.975);
+    }
+
+    .experiences__card:hover .experiences__picture {
+      box-shadow: 0 2.25rem 3.5rem -2rem rgb(60 40 20 / 55%);
+    }
+
+    .experiences__card:hover .experiences__image {
+      scale: 1.09;
+      translate: var(--shift-x, 0) var(--shift-y, 0);
+    }
+
+    .experiences__card:hover .experiences__light {
+      opacity: 1;
+    }
+
+    .experiences__card:hover .experiences__frame {
+      clip-path: inset(0 0 0 0);
+    }
+
+    .experiences__card:hover .experiences__title {
+      transform: translateY(-0.5rem);
+    }
+
+    .experiences__card:hover .experiences__text {
+      color: var(--ink);
+    }
+  }
+
   @media (min-width: 56.25em) {
+    .experiences__track {
+      --card: min(26rem, calc((100svh - 19rem) / 1.25));
+    }
+
     .experiences__planner {
       margin-left: calc(var(--label-column) + 4rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .experiences__card,
+    .experiences__picture,
+    .experiences__image,
+    .experiences__frame,
+    .experiences__title {
+      transition: none;
     }
   }
 </style>
@@ -159,6 +375,7 @@ import { pageHref } from '@/data/routes';
   /* A round icon button, shared by the card row and the gallery. */
   .round-button {
     display: inline-flex;
+    flex: none;
     align-items: center;
     justify-content: center;
     width: var(--control-height);
@@ -169,11 +386,15 @@ import { pageHref } from '@/data/routes';
     background: none;
     transition:
       border-color var(--duration-quick) ease,
+      background-color var(--duration-quick) ease,
+      color var(--duration-quick) ease,
       opacity var(--duration-quick) ease;
   }
 
-  .round-button:hover {
+  .round-button:hover:not(:disabled) {
     border-color: var(--ink);
+    background: var(--ink);
+    color: var(--surface);
   }
 
   .round-button:disabled {

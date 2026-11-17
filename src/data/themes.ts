@@ -28,23 +28,36 @@ export interface Theme {
 }
 
 export const themes = {
+  /* The first three are dark: they sit behind the opening film, the film of
+     the reservoirs and the gateway, and are taken from the shadows in those
+     pictures, so the header and the fades between them stay in their colors. */
   dawn: {
-    surface: '#c9d2d6',
-    surfaceRaised: '#d8dfe2',
-    ink: '#1c2428',
-    inkMuted: '#46535a',
-    accent: '#7a4630',
-    line: '#a9b4b8',
-    lineStrong: '#66737a',
+    surface: '#1f2420',
+    surfaceRaised: '#2a302b',
+    ink: '#f4efe6',
+    inkMuted: '#c5c8bd',
+    accent: '#e8b877',
+    line: '#394039',
+    lineStrong: '#8a9187',
   },
   'first-light': {
-    surface: '#dcddd8',
-    surfaceRaised: '#e6e7e3',
-    ink: '#1c2428',
-    inkMuted: '#46535a',
-    accent: '#7a4630',
-    line: '#b9c0c1',
-    lineStrong: '#6b777c',
+    surface: '#1b231f',
+    surfaceRaised: '#262f2a',
+    ink: '#f4efe6',
+    inkMuted: '#c3c9be',
+    accent: '#e8b877',
+    line: '#343d37',
+    lineStrong: '#87918a',
+  },
+  /* The shade inside the brick gateway. */
+  gateway: {
+    surface: '#1d1611',
+    surfaceRaised: '#2a2019',
+    ink: '#f5ede2',
+    inkMuted: '#cfbeab',
+    accent: '#e6ab85',
+    line: '#3c2e23',
+    lineStrong: '#96806c',
   },
   morning: {
     surface: '#f3eee6',
@@ -73,14 +86,16 @@ export const themes = {
     line: '#dccdb8',
     lineStrong: '#857d70',
   },
+  /* Night falling on the restaurant: the dark of its lawn and roof, with the
+     gold of its lanterns as the accent. */
   dusk: {
-    surface: '#8c4a31',
-    surfaceRaised: '#7c402a',
-    ink: '#fbf3ea',
-    inkMuted: '#ead3c3',
-    accent: '#f7d49b',
-    line: '#a9664b',
-    lineStrong: '#d9a58c',
+    surface: '#16110c',
+    surfaceRaised: '#231a12',
+    ink: '#f6ecdf',
+    inkMuted: '#cdbca6',
+    accent: '#e9b266',
+    line: '#392c1e',
+    lineStrong: '#907c64',
   },
   gallery: {
     surface: '#0e1112',

@@ -28,6 +28,6 @@ describe('themeStyles', () => {
     for (const name of Object.keys(themes)) {
       expect(css).toContain(`[data-theme='${name}']`);
     }
-    expect(css).toContain('--surface:#c9d2d6');
+    expect(css).toContain(`--surface:${themes.dawn.surface}`);
   });
 });

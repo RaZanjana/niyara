@@ -1,0 +1,28 @@
+---
+/**
+ * Ambient: the soft glow behind a picture, made from the picture itself.
+ *
+ * Give it a shot ID, or the public address of a film frame. Put it in the
+ * same box as the picture, before it, and leave that box free to overflow.
+ * See `.ambient` in styles/base.css for how far the glow reaches.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import type { ShotId } from '@/data/shots';
+import { ambientUri, publicFile, shotFile } from '@/lib/ambient';
+
+interface Props extends HTMLAttributes<'div'> {
+  shot?: ShotId;
+  /** Public address of a film frame, for example `/frames/hero/desktop/0001.webp`. */
+  frame?: string;
+}
+
+const { shot, frame, class: className, ...rest } = Astro.props;
+const file = shot ? shotFile(shot) : frame ? publicFile(frame) : undefined;
+const uri = await ambientUri(file);
+---
+
+{uri && (
+  <div class:list={['ambient', className]} aria-hidden="true" {...rest}>
+    <img src={uri} alt="" decoding="async" />
+  </div>
+)}

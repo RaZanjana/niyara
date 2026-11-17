@@ -18,6 +18,11 @@ interface Shot {
 }
 
 export const shots = {
+  S02: {
+    name: 'Tank Pavilion, from the water',
+    alt: 'A tiled pavilion on the bank at dawn, its doors open and a lamp lit inside, mirrored in the still reservoir.',
+    tone: '#a98a6c',
+  },
   S03: {
     name: 'Through the gateway',
     alt: 'A brick gateway opening onto a courtyard with a long channel of still water and tall trees beyond.',
@@ -103,6 +108,26 @@ export const shots = {
     name: 'A day in Wilpattu',
     alt: 'Guests in a safari jeep watching a small herd of elephants walk along the edge of a forest lake.',
     tone: '#c5cdb9',
+  },
+  S24: {
+    name: 'Courtyard Suite, the bedroom',
+    alt: 'A wide teak bed in white linen facing timber shutters folded back onto a brick-walled courtyard with a frangipani tree and a stone bath.',
+    tone: '#d9c6ad',
+  },
+  S25: {
+    name: 'Courtyard Suite, the outdoor bath',
+    alt: 'A carved stone bathtub under a frangipani tree in a private brick courtyard at dusk, lit by brass lanterns.',
+    tone: '#6b4a34',
+  },
+  S26: {
+    name: 'Bund Villa, the bedroom',
+    alt: 'A teak four-poster bed with white drapes, its doors open onto a private green-stone plunge pool and the reservoir.',
+    tone: '#d6cdbd',
+  },
+  S27: {
+    name: 'Bund Villa, the pool at dusk',
+    alt: 'A villa\u2019s lit plunge pool and loungers at dusk, the villa glowing behind and the reservoir reflecting the evening sky.',
+    tone: '#4a4a44',
   },
 } as const satisfies Record<string, Shot>;
 

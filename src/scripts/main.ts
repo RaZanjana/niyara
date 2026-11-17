@@ -11,22 +11,31 @@
  */
 import { initSmoothScroll } from './lib/smooth-scroll';
 import { initScrollScenes } from './scenes';
-import { initLocation, initPoolRipples, initScroller } from './ui/small-interactions';
-import { initBookingForm, initNewsletterForm } from './ui/enquiry';
+import { initCardHover, initPoolRipples, initScroller } from './ui/small-interactions';
+import { initBookingModal } from './ui/booking-modal';
+import { initCalendars } from './ui/calendar';
+import { initBookingForms } from './ui/enquiry';
 import { initGallery } from './ui/gallery';
 import { initMenu } from './ui/menu';
+import { initLoader } from './ui/loader';
 import { initRooms } from './ui/rooms';
+import { initSelects } from './ui/select';
 
 const scroll = initSmoothScroll();
+
+// First, so the title card is in charge before anything else starts loading.
+initLoader(scroll);
 
 initMenu(scroll);
 initRooms();
 initGallery();
 initScroller();
-initLocation();
+initCardHover();
 initPoolRipples();
-initBookingForm();
-initNewsletterForm();
+initCalendars();
+initSelects();
+initBookingForms();
+initBookingModal(scroll);
 
 // Last, because it measures the page, and the pieces above can change its height.
 initScrollScenes();
