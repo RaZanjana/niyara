@@ -36,8 +36,10 @@
 
   /* Space */
   --gutter: clamp(1.25rem, 6.5vw, 7rem);
-  --section-space: clamp(6.5rem, 13vw, 13rem);
-  --block-space: clamp(3.5rem, 8vw, 8rem);
+  /* On a phone the space between and within sections is kept tighter: a
+     narrow screen shows less at once, and long gaps read as empty. */
+  --section-space: clamp(4rem, 13vw, 13rem);
+  --block-space: clamp(2.5rem, 8vw, 8rem);
   --content-max: 85rem;
   --measure: 34rem;
   --label-column: 12.5rem;

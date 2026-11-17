@@ -92,9 +92,11 @@ const { contact } = site;
 </footer>
 
 <style>
+  /* Room at the bottom for the back to top button, which sits in the corner,
+     so it never covers the last links. */
   .footer {
     position: relative;
-    padding-bottom: 2.5rem;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
     background: var(--surface);
     color: var(--ink);
   }

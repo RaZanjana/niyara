@@ -262,7 +262,6 @@ const first = gallerySlides[0];
   /* The glow: a blurred copy of each picture behind the frame. Only the
      current one is lit. */
   :global(html.js) .gallery__glow {
-    --ambient-blur: 4.5rem;
     --ambient-reach: 1.16;
     position: absolute;
     inset: 0;
@@ -281,8 +280,10 @@ const first = gallerySlides[0];
   :global(html.js) .gallery__stage {
     position: relative;
     display: block;
-    height: min(78svh, 46.25rem);
-    min-height: 26rem;
+    /* On a phone the photographs are landscape, so the frame keeps a calm
+       shape that does not crop them away. A wide screen sets its own height. */
+    height: auto;
+    aspect-ratio: 4 / 3.4;
     overflow: hidden;
     background: #0b0d0e;
     touch-action: pan-y;
@@ -515,6 +516,7 @@ const first = gallerySlides[0];
 
     :global(html.js) .gallery__stage {
       height: min(70svh, 40rem);
+      aspect-ratio: auto;
     }
 
     :global(html.js) .gallery__bar {

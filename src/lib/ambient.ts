@@ -17,13 +17,15 @@ const root = process.cwd();
 const imagesFolder = path.join(root, 'src/assets/images');
 
 /**
- * The longest side of an ambient copy, in pixels, and how much it is
- * blurred here, once, while the site is built. Blurred enough, a small copy
- * stretched across the screen looks like a soft glow by itself, so phones do
- * not have to blur it again on every frame (see `.ambient` in base.css).
+ * The longest side of an ambient copy, in pixels, and how much it is blurred
+ * here, once, while the site is built. The blur is about a tenth of the
+ * picture's width: enough that, stretched across the screen, it reads as a
+ * wash of the picture's colors, never as a second, faint copy of it. The
+ * browser does not blur it again, on any screen (see `.ambient` in base.css),
+ * so it looks the same on a phone as on a desktop and costs a phone nothing.
  */
-const AMBIENT_SIZE = 96;
-const AMBIENT_BLUR = 4.5;
+const AMBIENT_SIZE = 64;
+const AMBIENT_BLUR = 6.5;
 
 const cache = new Map<string, Promise<string>>();
 
@@ -47,7 +49,7 @@ export function ambientUri(file: string | undefined): Promise<string> {
       .resize(AMBIENT_SIZE, AMBIENT_SIZE, { fit: 'inside' })
       .blur(AMBIENT_BLUR)
       .modulate({ saturation: 1.15 })
-      .webp({ quality: 58 })
+      .webp({ quality: 70 })
       .toBuffer()
       .then((buffer) => `data:image/webp;base64,${buffer.toString('base64')}`);
     cache.set(file, uri);

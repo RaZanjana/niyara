@@ -75,7 +75,9 @@ feathered, and what shows through is that glow. So the fade between a picture
 and the page is made of the picture's own colors.
 
 The blurred copies are made while the site is built (`src/lib/ambient.ts`) and
-written straight into the page. Each is a few hundred bytes.
+written straight into the page. Each is a few hundred bytes, blurred enough
+to read as a wash of the picture's colors, and faded out at its own edges, so
+a glow never ends in a line.
 
 ## Phones
 
@@ -87,8 +89,9 @@ What makes a phone stutter is avoided on purpose:
   height the bars can cover, so it is never hidden under them.
 - The header's frosted glass is a plain tint on touch screens: blurring a
   moving film behind it on every frame is too much for a phone.
-- The color glows behind pictures are blurred once, while the site is built.
-  Only a desktop blurs them a little more, live.
+- The color glows behind pictures are blurred once, while the site is built,
+  and their own edges fade out. The browser blurs nothing, so they look the
+  same on a phone as on a desktop.
 - Nothing animates a blur filter.
 - Phone film frames are 540 px wide, and fewer, so the three films hold about
   200 MB of pictures in memory, not 400.
